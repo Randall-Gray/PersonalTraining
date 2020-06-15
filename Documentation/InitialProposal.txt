@@ -1,0 +1,35 @@
+Fitness Trainers/Club (SPF) Website - Not sure what they want, but want to show them what I can do.
+
+General Info Page about business
+Trainer Bios
+Pictures/Videos
+Contact info
+Login API with Roles: Client, Admin, Trainer
+
+Client Pages: Specific to logged in client.
+Account page - showing payments and amount due. Name, email, phone
+Maybe a payment API.
+Client post goals.
+Send questions to trainers.  Track conversations.
+Way for client to track progress.
+Way to schedule training sessions - individual/group. exercise/PT  And see all past sessions.
+Workout library of videos. Can tag favorites and display on page.
+Trainer can post workouts on customer page.
+
+Admin/Trainers
+Can see all client pages: monitor progress, leave notes, post week's workout video.
+See schedule of classes.
+Post videos to library.
+Send out emergency messages to all clients.
+
+ASP .NET API  
+asynchronous db calls.
+
+ER diagram sent and approved by instructors
+Approved userstories
+approved timeline
+
+
+google sign-in API
+Excel API for scheduling
+Paypal API for payments
