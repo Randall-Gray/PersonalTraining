@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace PersonalTraining.Models
 {
-    public class Trainer
+    public class Admin
     {
         [Key]
-        public int TrainerId { get; set; }
+        public int AdminId { get; set; }
 
         [Display(Name = "User Name")]
         public string LoginName { get; set; }
