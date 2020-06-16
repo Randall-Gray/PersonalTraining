@@ -10,7 +10,7 @@ using PersonalTraining.Data;
 namespace PersonalTraining.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20200616185122_Initial")]
+    [Migration("20200616203010_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -212,6 +212,9 @@ namespace PersonalTraining.Migrations
 
                     b.Property<DateTime>("DatePosted")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("General")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Question")
                         .HasColumnType("nvarchar(max)");

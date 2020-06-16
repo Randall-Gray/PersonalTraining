@@ -211,6 +211,9 @@ namespace PersonalTraining.Migrations
                     b.Property<DateTime>("DatePosted")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("General")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Question")
                         .HasColumnType("nvarchar(max)");
 

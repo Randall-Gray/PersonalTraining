@@ -85,6 +85,7 @@ namespace PersonalTraining.Migrations
                 {
                     FAQId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    General = table.Column<bool>(nullable: false),
                     Question = table.Column<string>(nullable: true),
                     Answer = table.Column<string>(nullable: true),
                     DatePosted = table.Column<DateTime>(nullable: false),

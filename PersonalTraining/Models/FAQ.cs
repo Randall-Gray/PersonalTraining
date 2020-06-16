@@ -12,6 +12,9 @@ namespace PersonalTraining.Models
         [Key]
         public int FAQId { get; set; }
 
+        // A general FAQ is posted on the outer pages before client login.
+        public bool General { get; set; }
+
         public string Question { get; set; }
 
         public string Answer { get; set; }
