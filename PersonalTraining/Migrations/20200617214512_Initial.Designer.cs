@@ -10,7 +10,7 @@ using PersonalTraining.Data;
 namespace PersonalTraining.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20200616203010_Initial")]
+    [Migration("20200617214512_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,9 @@ namespace PersonalTraining.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -120,6 +123,9 @@ namespace PersonalTraining.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Goal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -261,6 +267,9 @@ namespace PersonalTraining.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")

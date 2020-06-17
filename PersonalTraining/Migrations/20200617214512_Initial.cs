@@ -17,7 +17,8 @@ namespace PersonalTraining.Migrations
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true)
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    IdentityUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,7 +56,8 @@ namespace PersonalTraining.Migrations
                     Goal = table.Column<string>(nullable: true),
                     FavoriteVideo1 = table.Column<int>(nullable: false),
                     FavoriteVideo2 = table.Column<int>(nullable: false),
-                    FavoriteVideo3 = table.Column<int>(nullable: false)
+                    FavoriteVideo3 = table.Column<int>(nullable: false),
+                    IdentityUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -107,7 +109,8 @@ namespace PersonalTraining.Migrations
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true)
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    IdentityUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

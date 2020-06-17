@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,5 +25,7 @@ namespace PersonalTraining.Models
 
         [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
+
+        public string IdentityUserId { get; set; }
     }
 }

@@ -40,5 +40,7 @@ namespace PersonalTraining.Models
 
         [Display(Name = "Favoriate Video 3")]
         public int FavoriteVideo3 { get; set; }
+
+        public string IdentityUserId { get; set; }
     }
 }

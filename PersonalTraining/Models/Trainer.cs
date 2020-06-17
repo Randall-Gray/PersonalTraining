@@ -24,5 +24,7 @@ namespace PersonalTraining.Models
 
         [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
+
+        public string IdentityUserId { get; set; }
     }
 }
