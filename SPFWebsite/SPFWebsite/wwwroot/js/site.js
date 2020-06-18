@@ -2,11 +2,9 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your Javascript code.
-function runthis(e) {
-    $('#pid').html(@UserIdentity.Name);
+function GetRole() {
 
-    e.preventDefault();
+    var user = this.value;
 }
 
-$('#submitGetAll').click(runthis);
-$('pid').click( runthis );
+$('#identity').click(GetRole);
