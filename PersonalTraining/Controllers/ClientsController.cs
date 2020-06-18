@@ -29,10 +29,10 @@ namespace PersonalTraining.Controllers
         }
 
         // GET: api/Clients/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Client>> GetClient(int id)
+        [HttpGet("{identityValue}")]
+        public async Task<ActionResult<Client>> GetClient(string identityValue)
         {
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.IdentityUserId == identityValue);
 
             if (client == null)
             {

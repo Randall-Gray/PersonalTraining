@@ -29,10 +29,10 @@ namespace PersonalTraining.Controllers
         }
 
         // GET: api/Admins/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Admin>> GetAdmin(int id)
+        [HttpGet("{identityValue}")]
+        public async Task<ActionResult<Admin>> GetAdmin(string identityValue)
         {
-            var admin = await _context.Admins.FindAsync(id);
+            var admin = await _context.Admins.FirstOrDefaultAsync(a => a.IdentityUserId == identityValue);
 
             if (admin == null)
             {

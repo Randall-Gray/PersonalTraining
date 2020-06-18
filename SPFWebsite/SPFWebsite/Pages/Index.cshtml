@@ -4,6 +4,32 @@
     ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Starting Point Fitness</h1>
-</div>
+    <div class="text-center">
+        <h1 class="display-4">Starting Point Fitness</h1>
+
+        <p>@User.Identity.Name</p><br />
+        <p>@Model.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)</p>
+        <form id="moviesForm">
+            <section id="movieTitleSection" class="formSection">
+                <label for="movieTitleInput">Title</label>
+                <input type="text" name="movieTitle" id="movieTitleInput" placeholder="Enter a movie title" />
+            </section>
+            <section id="movieGenreSection" class="formSection">
+                <label for="movieGenreInput">Genre</label>
+                <input type="text" name="movieGenre" id="movieGenreInput" placeholder="Enter a genre" />
+            </section>
+            <section id="movieDirectorSection" class="formSection">
+                <label for="movieDirectorInput">Director</label>
+                <input type="text" name="movieDirector" id="movieDirectorInput" placeholder="Enter a director's name" />
+            </section>
+            <section id="moviePosterSection" class="formSection">
+                <label for="moviePosterInput">Movie Promo Poster</label>
+                <input type="text" name="moviePoster" id="moviePosterInput" placeholder="Enter the filename to the movie poster (NOTE: this must be upload to Client/Images in the solution directory to load)" />
+            </section>
+            <section id="submitButtonsSection" class="formSection">
+                <input type="submit" id="submitPost" value="Create" />
+                <button id="submitGetAll">View all movies</button>
+            </section>
+        </form>
+
+    </div>

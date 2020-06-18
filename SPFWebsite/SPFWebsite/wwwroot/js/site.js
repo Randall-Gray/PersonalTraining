@@ -2,3 +2,11 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your Javascript code.
+function runthis(e) {
+    $('#pid').html(@UserIdentity.Name);
+
+    e.preventDefault();
+}
+
+$('#submitGetAll').click(runthis);
+$('pid').click( runthis );
