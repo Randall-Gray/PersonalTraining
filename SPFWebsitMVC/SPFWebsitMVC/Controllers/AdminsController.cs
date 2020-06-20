@@ -22,7 +22,7 @@ namespace SPFWebsitMVC.Controllers
         // GET: Admins
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Admin.ToListAsync());
+            return View(null);// await _context.Admin.ToListAsync());
         }
 
         // GET: Admins/Details/5

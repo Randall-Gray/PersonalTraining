@@ -14,6 +14,7 @@ namespace SPFWebsitMVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private bool ready;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -38,6 +39,20 @@ namespace SPFWebsitMVC.Controllers
         public IActionResult Index()
         {
             SetRole();
+            while (!ready) ;
+            if (GlobalSettings.CurrentUserRole == "Admin")
+            {
+                return RedirectToAction("Index", "Admins");
+            }
+            if (GlobalSettings.CurrentUserRole == "Trainer")
+            {
+                return View("Index", "Trainers");
+            }
+            if (GlobalSettings.CurrentUserRole == "Client")
+            {
+                return View("Index", "Clients");
+            }
+
             return View();
         }
 
@@ -62,8 +77,9 @@ namespace SPFWebsitMVC.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async Task<IActionResult> SetRole()
+        public async Task<IActionResult> SetRole()
         {
+            ready = false;
             string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             HttpClient httpClient = new HttpClient();
             string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
@@ -71,17 +87,27 @@ namespace SPFWebsitMVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 GlobalSettings.CurrentUserRole = "Admin";
-                return RedirectToAction(nameof(Index), "Home");
+                ready = true;
+                return RedirectToAction("Index", "Admins");
             }
             url = $"{GlobalSettings.baseEndpoint}/trainers/{userId}";
             response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 GlobalSettings.CurrentUserRole = "Trainer";
-                return RedirectToAction(nameof(Index), "Home");
+                ready = true;
+                return RedirectToAction("Index", "Trainers");
             }
-            GlobalSettings.CurrentUserRole = "Client";
-            return RedirectToAction(nameof(Index), "Home");
+            url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                GlobalSettings.CurrentUserRole = "Client";
+                ready = true;
+                return RedirectToAction("Index", "Clients");
+            }
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }
