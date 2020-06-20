@@ -28,5 +28,17 @@ namespace PersonalTraining.Data
         }
 
         // Member methods
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Admin>()
+                .HasData(
+                    new Admin { AdminId = 1, FirstName = "Randall", LastName = "Gray", 
+                                Email = "randall.gray@gmail.com", PhoneNumber = "262-239-8360",
+                                IdentityUserId = "64b46cd8-f808-497e-9267-fa9c88d3deaf"
+                    }
+                );
+        }
     }
 }

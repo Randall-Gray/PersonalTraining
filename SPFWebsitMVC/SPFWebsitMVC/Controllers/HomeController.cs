@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -35,6 +37,7 @@ namespace SPFWebsitMVC.Controllers
 
         public IActionResult Index()
         {
+            SetRole();
             return View();
         }
 
@@ -57,6 +60,28 @@ namespace SPFWebsitMVC.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private async Task<IActionResult> SetRole()
+        {
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                GlobalSettings.CurrentUserRole = "Admin";
+                return RedirectToAction(nameof(Index), "Home");
+            }
+            url = $"{GlobalSettings.baseEndpoint}/trainers/{userId}";
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                GlobalSettings.CurrentUserRole = "Trainer";
+                return RedirectToAction(nameof(Index), "Home");
+            }
+            GlobalSettings.CurrentUserRole = "Client";
+            return RedirectToAction(nameof(Index), "Home");
         }
     }
 }

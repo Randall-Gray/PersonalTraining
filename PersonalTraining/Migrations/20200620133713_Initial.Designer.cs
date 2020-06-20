@@ -10,7 +10,7 @@ using PersonalTraining.Data;
 namespace PersonalTraining.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20200620030530_Initial")]
+    [Migration("20200620133713_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,6 +46,17 @@ namespace PersonalTraining.Migrations
                     b.HasKey("AdminId");
 
                     b.ToTable("Admins");
+
+                    b.HasData(
+                        new
+                        {
+                            AdminId = 1,
+                            Email = "randall.gray@gmail.com",
+                            FirstName = "Randall",
+                            IdentityUserId = "64b46cd8-f808-497e-9267-fa9c88d3deaf",
+                            LastName = "Gray",
+                            PhoneNumber = "262-239-8360"
+                        });
                 });
 
             modelBuilder.Entity("PersonalTraining.Models.Attendance", b =>

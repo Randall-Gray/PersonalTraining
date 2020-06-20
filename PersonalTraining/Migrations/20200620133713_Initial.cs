@@ -210,6 +210,11 @@ namespace PersonalTraining.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Admins",
+                columns: new[] { "AdminId", "Email", "FirstName", "IdentityUserId", "LastName", "PhoneNumber" },
+                values: new object[] { 1, "randall.gray@gmail.com", "Randall", "64b46cd8-f808-497e-9267-fa9c88d3deaf", "Gray", "262-239-8360" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Attendances_ClientId",
                 table: "Attendances",
