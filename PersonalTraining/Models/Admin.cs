@@ -12,9 +12,6 @@ namespace PersonalTraining.Models
         [Key]
         public int AdminId { get; set; }
 
-        [Display(Name = "User Name")]
-        public string LoginName { get; set; }
-
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
