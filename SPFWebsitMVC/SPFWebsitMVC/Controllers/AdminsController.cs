@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SPFWebsitMVC.Data;
 using SPFWebsitMVC.Models;
 
@@ -22,7 +25,17 @@ namespace SPFWebsitMVC.Controllers
         // GET: Admins
         public async Task<IActionResult> Index()
         {
-            return View(null);// await _context.Admin.ToListAsync());
+            List<Admin> Admins = null;
+            //string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient client = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins/";
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                Admins = JsonConvert.DeserializeObject<List<Admin>>(jsonResponse);
+            }
+            return View(Admins);
         }
 
         // GET: Admins/Details/5
@@ -33,8 +46,17 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var admin = await _context.Admin
-                .FirstOrDefaultAsync(m => m.AdminId == id);
+            Admin admin = null;
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient client = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                admin = JsonConvert.DeserializeObject<Admin>(jsonResponse);
+            }
+
             if (admin == null)
             {
                 return NotFound();

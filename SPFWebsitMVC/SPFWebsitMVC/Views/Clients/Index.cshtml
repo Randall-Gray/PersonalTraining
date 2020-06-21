@@ -5,10 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Client Home</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @*<a asp-action="Create">Create New</a>*@
 </p>
 <table class="table">
     <thead>
@@ -40,9 +40,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.FavoriteVideo3)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.IdentityUserId)
-            </th>
+            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -76,9 +76,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.FavoriteVideo3)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.IdentityUserId)
-            </td>
+            </td>*@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ClientId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ClientId">Details</a> |

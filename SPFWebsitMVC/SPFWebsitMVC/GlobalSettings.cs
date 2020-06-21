@@ -8,6 +8,6 @@ namespace SPFWebsitMVC
     public static class GlobalSettings
     {
         public static readonly string baseEndpoint = "https://localhost:44391/api";
-        public static string CurrentUserRole;
+        public static string CurrentUserRole = null;
     }
 }

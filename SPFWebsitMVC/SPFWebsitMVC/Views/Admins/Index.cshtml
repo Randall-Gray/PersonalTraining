@@ -5,10 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Admin Home</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-controller="Admins" asp-action="Create">Create Admin</a>
+    <a asp-controller="Trainers" asp-action="Create">Create Trainer</a>
+    <a asp-controller="Trainers" asp-action="Index">Trainer Home</a>
+    <a asp-controller="Clients" asp-action="Index">Client Home</a>
 </p>
 <table class="table">
     <thead>
@@ -25,9 +28,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.IdentityUserId)
-            </th>
+            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -46,9 +49,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.IdentityUserId)
-            </td>
+            </td>*@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.AdminId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.AdminId">Details</a> |

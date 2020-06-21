@@ -107,6 +107,8 @@ namespace SPFWebsitMVC.Controllers
                 return RedirectToAction("Index", "Clients");
             }
 
+            GlobalSettings.CurrentUserRole = null;
+            ready = true;
             return RedirectToAction("Index", "Home");
         }
     }
