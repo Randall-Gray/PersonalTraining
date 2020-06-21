@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -26,7 +27,6 @@ namespace SPFWebsitMVC.Controllers
         public async Task<IActionResult> Index()
         {
             List<Admin> Admins = null;
-            //string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             HttpClient client = new HttpClient();
             string url = $"{GlobalSettings.baseEndpoint}/admins/";
             HttpResponseMessage response = await client.GetAsync(url);
@@ -62,29 +62,33 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            return View(admin);
+            return View();
         }
 
         // GET: Admins/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            // Admins can't be created.  They are created as clients and then moved over to Admins.
+            return RedirectToAction("Index", "Admins");
         }
 
         // POST: Admins/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Only called from Clients.Index to convert client to an Admin.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AdminId,FirstName,LastName,Email,PhoneNumber,IdentityUserId")] Admin admin)
         {
-            if (ModelState.IsValid)
+            string jsonForPost = JsonConvert.SerializeObject(admin);
+            HttpClient client = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins";
+            HttpResponseMessage response = await client.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+            if (response.IsSuccessStatusCode)
             {
-                _context.Add(admin);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                string jsonResponse = await response.Content.ReadAsStringAsync();
             }
-            return View(admin);
+            return RedirectToAction("Index", "Clients");
         }
 
         // GET: Admins/Edit/5
@@ -95,11 +99,22 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var admin = await _context.Admin.FindAsync(id);
+            Admin admin = null;
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient client = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                admin = JsonConvert.DeserializeObject<Admin>(jsonResponse);
+            }
+
             if (admin == null)
             {
                 return NotFound();
             }
+
             return View(admin);
         }
 
@@ -119,12 +134,20 @@ namespace SPFWebsitMVC.Controllers
             {
                 try
                 {
-                    _context.Update(admin);
-                    await _context.SaveChangesAsync();
+                    string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    admin.IdentityUserId = userId;
+                    string jsonForPost = JsonConvert.SerializeObject(admin);
+                    HttpClient client = new HttpClient();
+                    string url = $"{GlobalSettings.baseEndpoint}/admins/";
+                    HttpResponseMessage response = await client.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AdminExists(admin.AdminId))
+                    if (await AdminExists() == false)
                     {
                         return NotFound();
                     }
@@ -133,7 +156,7 @@ namespace SPFWebsitMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             return View(admin);
         }
@@ -167,9 +190,18 @@ namespace SPFWebsitMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AdminExists(int id)
+        private async Task<bool> AdminExists()
         {
-            return _context.Admin.Any(e => e.AdminId == id);
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

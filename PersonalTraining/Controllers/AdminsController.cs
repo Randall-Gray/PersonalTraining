@@ -42,20 +42,6 @@ namespace PersonalTraining.Controllers
             return admin;
         }
 
-        // GET: api/Admins/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Admin>> GetAdmin(int id)
-        //{
-        //    var admin = await _context.Admins.FirstOrDefaultAsync(a => a.AdminId == id);
-
-        //    if (admin == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return admin;
-        //}
-
         // PUT: api/Admins/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
