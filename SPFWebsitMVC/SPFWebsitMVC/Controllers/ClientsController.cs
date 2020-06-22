@@ -48,11 +48,6 @@ namespace SPFWebsitMVC.Controllers
             string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             url += "GetClientByIdentityValue/" + userId;
             response = await httpClient.GetAsync(url);
-            url = $"{GlobalSettings.baseEndpoint}/clients/";
-            int id = 1;
-            url += "GetClientById/" + id;
-            response = await httpClient.GetAsync(url);
-
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
@@ -75,9 +70,8 @@ namespace SPFWebsitMVC.Controllers
             }
 
             Client client = null;
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/clients/{id}";
+            string url = $"{GlobalSettings.baseEndpoint}/clients/GetClientById/{id}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -117,7 +111,6 @@ namespace SPFWebsitMVC.Controllers
                 HttpResponseMessage response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
                 if (response.IsSuccessStatusCode)
                 {
-                    //string jsonResponse = await response.Content.ReadAsStringAsync();
                     return RedirectToAction("Index", "Clients");
                 }
             }
@@ -133,9 +126,8 @@ namespace SPFWebsitMVC.Controllers
             }
 
             Client client = null;
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            string url = $"{GlobalSettings.baseEndpoint}/clients/GetClientById/{id}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -167,20 +159,14 @@ namespace SPFWebsitMVC.Controllers
             {
                 try
                 {
-                    //string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    //client.IdentityUserId = userId;
                     string jsonForPost = JsonConvert.SerializeObject(client);
                     HttpClient httpClient = new HttpClient();
                     string url = $"{GlobalSettings.baseEndpoint}/clients/{id}";
                     HttpResponseMessage response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
-                    //if (response.IsSuccessStatusCode)
-                    //{
-                    //    string jsonResponse = await response.Content.ReadAsStringAsync();
-                    //}
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (await ClientExists() == false)
+                    if (await ClientExists(id) == false)
                     {
                         return NotFound();
                     }
@@ -203,9 +189,8 @@ namespace SPFWebsitMVC.Controllers
             }
 
             Client client = null;
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            string url = $"{GlobalSettings.baseEndpoint}/clients/GetClientById/{id}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -237,11 +222,10 @@ namespace SPFWebsitMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        private async Task<bool> ClientExists()
+        private async Task<bool> ClientExists(int? id)
         {
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            string url = $"{GlobalSettings.baseEndpoint}/clients/GetClientById/{id}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {

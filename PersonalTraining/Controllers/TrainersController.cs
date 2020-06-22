@@ -97,7 +97,7 @@ namespace PersonalTraining.Controllers
             _context.Trainers.Add(trainer);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTrainer", new { id = trainer.TrainerId }, trainer);
+            return CreatedAtAction("GetTrainerByIdentityValue", new { id = trainer.TrainerId }, trainer);
         }
 
         // DELETE: api/Trainers/5
