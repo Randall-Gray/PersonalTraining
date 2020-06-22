@@ -89,7 +89,7 @@ namespace SPFWebsitMVC.Controllers
                 return RedirectToAction("Index", "Home");
             }
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
+            string url = $"{GlobalSettings.baseEndpoint}/admins/GetAdminByIdentityValue/{userId}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -97,7 +97,7 @@ namespace SPFWebsitMVC.Controllers
                 ready = true;
                 return RedirectToAction("Index", "Admins");
             }
-            url = $"{GlobalSettings.baseEndpoint}/trainers/{userId}";
+            url = $"{GlobalSettings.baseEndpoint}/trainers/GetTrainerByIdentityValue/{userId}";
             response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -105,7 +105,7 @@ namespace SPFWebsitMVC.Controllers
                 ready = true;
                 return RedirectToAction("Index", "Trainers");
             }
-            url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            url = $"{GlobalSettings.baseEndpoint}/clients/GetClientByIdentityValue{userId}";
             response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {

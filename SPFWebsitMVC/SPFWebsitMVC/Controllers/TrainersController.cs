@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SPFWebsitMVC.Data;
 using SPFWebsitMVC.Models;
 
@@ -22,7 +26,38 @@ namespace SPFWebsitMVC.Controllers
         // GET: Trainers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Trainer.ToListAsync());
+            List<Trainer> Trainers = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/trainers/";
+            HttpResponseMessage response;
+
+            // Display all trainers
+            if (GlobalSettings.CurrentUserRole == "Admin")
+            {
+                response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    Trainers = JsonConvert.DeserializeObject<List<Trainer>>(jsonResponse);
+                }
+                return View(Trainers);
+            }
+            // Only display the logged in Trainer
+            Trainer trainer = null;
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            url += "GetTrainerByIdentityValue/" + userId;
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                trainer = JsonConvert.DeserializeObject<Trainer>(jsonResponse);
+                Trainers = new List<Trainer>();
+                Trainers.Add(trainer);
+            }
+            if (Trainers == null)
+                return RedirectToAction("Create");
+
+            return View(Trainers);
         }
 
         // GET: Trainers/Details/5
@@ -33,8 +68,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var trainer = await _context.Trainer
-                .FirstOrDefaultAsync(m => m.TrainerId == id);
+            Trainer trainer = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/trainers/GetTrainerById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                trainer = JsonConvert.DeserializeObject<Trainer>(jsonResponse);
+            }
+
             if (trainer == null)
             {
                 return NotFound();
@@ -46,23 +89,23 @@ namespace SPFWebsitMVC.Controllers
         // GET: Trainers/Create
         public IActionResult Create()
         {
-            return View();
+            // Trainers can't be created.  They are created as clients and then moved over to Trainers.
+            return RedirectToAction("Index", "Trainers");
         }
 
         // POST: Trainers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Only called from Clients.Index to convert client to a Trainer.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TrainerId,FirstName,LastName,Email,PhoneNumber,IdentityUserId")] Trainer trainer)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(trainer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(trainer);
+            string jsonForPost = JsonConvert.SerializeObject(trainer);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/trainers";
+            HttpResponseMessage response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+            return RedirectToAction("Index", "Clients");
         }
 
         // GET: Trainers/Edit/5
@@ -73,11 +116,21 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var trainer = await _context.Trainer.FindAsync(id);
+            Trainer trainer = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/trainers/GetTrainerById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                trainer = JsonConvert.DeserializeObject<Trainer>(jsonResponse);
+            }
+
             if (trainer == null)
             {
                 return NotFound();
             }
+
             return View(trainer);
         }
 
@@ -97,12 +150,14 @@ namespace SPFWebsitMVC.Controllers
             {
                 try
                 {
-                    _context.Update(trainer);
-                    await _context.SaveChangesAsync();
+                    string jsonForPost = JsonConvert.SerializeObject(trainer);
+                    HttpClient httpClient = new HttpClient();
+                    string url = $"{GlobalSettings.baseEndpoint}/trainers/{id}";
+                    HttpResponseMessage response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TrainerExists(trainer.TrainerId))
+                    if (await TrainerExists(id) == false)
                     {
                         return NotFound();
                     }
@@ -111,7 +166,7 @@ namespace SPFWebsitMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             return View(trainer);
         }
@@ -124,8 +179,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var trainer = await _context.Trainer
-                .FirstOrDefaultAsync(m => m.TrainerId == id);
+            Trainer trainer = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/trainers/GetTrainerById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                trainer = JsonConvert.DeserializeObject<Trainer>(jsonResponse);
+            }
+
             if (trainer == null)
             {
                 return NotFound();
@@ -139,15 +202,28 @@ namespace SPFWebsitMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var trainer = await _context.Trainer.FindAsync(id);
-            _context.Trainer.Remove(trainer);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/trainers/{id}";
+            HttpResponseMessage response = await httpClient.DeleteAsync(url);
+            return RedirectToAction("Index");
         }
 
-        private bool TrainerExists(int id)
+        private async Task<bool> TrainerExists(int? id)
         {
-            return _context.Trainer.Any(e => e.TrainerId == id);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/trainers/GetTrainerById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

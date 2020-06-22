@@ -27,9 +27,9 @@ namespace SPFWebsitMVC.Controllers
         public async Task<IActionResult> Index()
         {
             List<Admin> Admins = null;
-            HttpClient client = new HttpClient();
+            HttpClient httpClient = new HttpClient();
             string url = $"{GlobalSettings.baseEndpoint}/admins/";
-            HttpResponseMessage response = await client.GetAsync(url);
+            HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
@@ -47,10 +47,9 @@ namespace SPFWebsitMVC.Controllers
             }
 
             Admin admin = null;
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            HttpClient client = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
-            HttpResponseMessage response = await client.GetAsync(url);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins/GetAdminById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
@@ -81,13 +80,9 @@ namespace SPFWebsitMVC.Controllers
         public async Task<IActionResult> Create([Bind("AdminId,FirstName,LastName,Email,PhoneNumber,IdentityUserId")] Admin admin)
         {
             string jsonForPost = JsonConvert.SerializeObject(admin);
-            HttpClient client = new HttpClient();
+            HttpClient httpClient = new HttpClient();
             string url = $"{GlobalSettings.baseEndpoint}/admins";
-            HttpResponseMessage response = await client.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
-            if (response.IsSuccessStatusCode)
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-            }
+            HttpResponseMessage response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
             return RedirectToAction("Index", "Clients");
         }
 
@@ -100,10 +95,9 @@ namespace SPFWebsitMVC.Controllers
             }
 
             Admin admin = null;
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            HttpClient client = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
-            HttpResponseMessage response = await client.GetAsync(url);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins/GetAdminById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
@@ -134,20 +128,14 @@ namespace SPFWebsitMVC.Controllers
             {
                 try
                 {
-                    //string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    //admin.IdentityUserId = userId;
                     string jsonForPost = JsonConvert.SerializeObject(admin);
-                    HttpClient client = new HttpClient();
+                    HttpClient httpClient = new HttpClient();
                     string url = $"{GlobalSettings.baseEndpoint}/admins/{id}";
-                    HttpResponseMessage response = await client.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string jsonResponse = await response.Content.ReadAsStringAsync();
-                    }
+                    HttpResponseMessage response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (await AdminExists() == false)
+                    if (await AdminExists(id) == false)
                     {
                         return NotFound();
                     }
@@ -162,16 +150,39 @@ namespace SPFWebsitMVC.Controllers
         }
 
         // GET: Admins/Delete/5
-        public async Task<IActionResult> Delete(Admin admin)
+        public async Task<IActionResult> Delete(int? id)
         {
-            //string jsonForPost = JsonConvert.SerializeObject(admin);
-            //HttpClient client = new HttpClient();
-            //string url = $"{GlobalSettings.baseEndpoint}/admins/{admin.AdminId}";
-            //HttpResponseMessage response = await client.DeleteAsync(url);
-            //if (!response.IsSuccessStatusCode)
-            //{
-            //    return RedirectToAction("Index", "Admins");
-            //}
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            // Can't delete last admin.  Check there are more than one.
+            List<Admin> Admins = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins/";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                Admins = JsonConvert.DeserializeObject<List<Admin>>(jsonResponse);
+            }
+            if (Admins == null || Admins.Count <= 1)
+                return RedirectToAction("Index");
+
+            Admin admin = null;
+            url = $"{GlobalSettings.baseEndpoint}/admins/GetAdminById/{id}";
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                admin = JsonConvert.DeserializeObject<Admin>(jsonResponse);
+            }
+
+            if (admin == null)
+            {
+                return NotFound();
+            }
 
             return View(admin);
         }
@@ -179,50 +190,23 @@ namespace SPFWebsitMVC.Controllers
         // POST: Admins/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var admin = await _context.Admin.FindAsync(id);
-            _context.Admin.Remove(admin);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-            //if (ModelState.IsValid)
-            //{
-            //    try
-            //    {
-            //        string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //        admin.IdentityUserId = userId;
-            //        string jsonForPost = JsonConvert.SerializeObject(admin);
-            //        HttpClient client = new HttpClient();
-            //        string url = $"{GlobalSettings.baseEndpoint}/admins/";
-            //        HttpResponseMessage response = await client.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
-            //        if (response.IsSuccessStatusCode)
-            //        {
-            //            string jsonResponse = await response.Content.ReadAsStringAsync();
-            //        }
-            //    }
-            //    catch (DbUpdateConcurrencyException)
-            //    {
-            //        if (await AdminExists() == false)
-            //        {
-            //            return NotFound();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //    return RedirectToAction("Index");
-            //}
-            //return View(admin);
-
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/admins/{id}";
+            HttpResponseMessage response = await httpClient.DeleteAsync(url);
+            return RedirectToAction("Index");
         }
 
-        private async Task<bool> AdminExists()
+        private async Task<bool> AdminExists(int? id)
         {
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
+            string url = $"{GlobalSettings.baseEndpoint}/admins/GetAdminById/{id}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {

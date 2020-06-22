@@ -79,11 +79,13 @@
             @*<td>
                 @Html.DisplayFor(modelItem => item.IdentityUserId)
             </td>*@
-            <td>
-                <a asp-controller="Clients" asp-action="Edit" asp-route-id="@item.ClientId">Edit</a> |
-                <a asp-controller="Clients" asp-action="Details" asp-route-id="@item.ClientId">Details</a> |
-                <a asp-controller="Clients" asp-action="Delete" asp-route-id="@item.ClientId">Delete</a>
-            </td>
+        <td>
+            <a asp-controller="Clients" asp-action="Edit" asp-route-id="@item.ClientId">Edit</a> |
+            <a asp-controller="Clients" asp-action="Details" asp-route-id="@item.ClientId">Details</a> |
+            <a asp-controller="Clients" asp-action="Delete" asp-route-id="@item.ClientId">Delete</a>
+            <a asp-controller="Clients" asp-action="MakeAdmin" asp-route-id="@item.ClientId">To Admin</a>
+            <a asp-controller="Clients" asp-action="MakeTrainer" asp-route-id="@item.ClientId">To Trainer</a>
+        </td>
         </tr>
 }
     </tbody>

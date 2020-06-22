@@ -44,16 +44,16 @@ namespace PersonalTraining.Controllers
 
         // GET: api/Trainers/GetTrainerById/5
         [HttpGet("GetTrainerById/{id}")]
-        public async Task<ActionResult<Client>> GetTrainerById(int id)
+        public async Task<ActionResult<Trainer>> GetTrainerById(int id)
         {
-            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == id);
+            var trainer = await _context.Trainers.FirstOrDefaultAsync(c => c.TrainerId == id);
 
-            if (client == null)
+            if (trainer == null)
             {
                 return NotFound();
             }
 
-            return client;
+            return trainer;
         }
 
         // PUT: api/Trainers/5

@@ -44,16 +44,16 @@ namespace PersonalTraining.Controllers
 
         // GET: api/Admins/GetAdminById/5
         [HttpGet("GetAdminById/{id}")]
-        public async Task<ActionResult<Client>> GetAdminById(int id)
+        public async Task<ActionResult<Admin>> GetAdminById(int id)
         {
-            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == id);
+            var admin = await _context.Admins.FirstOrDefaultAsync(c => c.AdminId == id);
 
-            if (client == null)
+            if (admin == null)
             {
                 return NotFound();
             }
 
-            return client;
+            return admin;
         }
 
         // PUT: api/Admins/5
