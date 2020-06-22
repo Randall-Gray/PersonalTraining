@@ -212,6 +212,48 @@ namespace SPFWebsitMVC.Controllers
             HttpResponseMessage response = await httpClient.DeleteAsync(url);
             return RedirectToAction("Index");
         }
+        public async Task<IActionResult> MakeAdmin(int? id)
+        {
+            if (GlobalSettings.CurrentUserRole != "Admin")
+                return RedirectToAction("Index");
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Trainer trainer = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/trainers/GetTrainerById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                trainer = JsonConvert.DeserializeObject<Trainer>(jsonResponse);
+            }
+
+            if (trainer == null)
+            {
+                return NotFound();
+            }
+
+            // Add trainer to admin table.
+            Admin admin = new Admin();
+            admin.FirstName = trainer.FirstName;
+            admin.LastName = trainer.LastName;
+            admin.Email = trainer.Email;
+            admin.PhoneNumber = trainer.PhoneNumber;
+            admin.IdentityUserId = trainer.IdentityUserId;
+
+            string jsonForPost = JsonConvert.SerializeObject(admin);
+            url = $"{GlobalSettings.baseEndpoint}/admins";
+            response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+
+            // Delete trainer from trainer table.
+            url = $"{GlobalSettings.baseEndpoint}/trainers/{trainer.TrainerId}";
+            response = await httpClient.DeleteAsync(url);
+            return RedirectToAction("Index");
+        }
 
         private async Task<bool> TrainerExists(int? id)
         {

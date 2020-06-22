@@ -222,6 +222,92 @@ namespace SPFWebsitMVC.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> MakeAdmin(int? id)
+        {
+            if (GlobalSettings.CurrentUserRole != "Admin")
+                return RedirectToAction("Index");
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Client client = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/GetClientById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+            }
+
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            // Add client to admin table.
+            Admin admin = new Admin();
+            admin.FirstName = client.FirstName;
+            admin.LastName = client.LastName;
+            admin.Email = client.Email;
+            admin.PhoneNumber = client.PhoneNumber;
+            admin.IdentityUserId = client.IdentityUserId;
+
+            string jsonForPost = JsonConvert.SerializeObject(admin);
+            url = $"{GlobalSettings.baseEndpoint}/admins";
+            response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+
+            // Delete client from client table.
+            url = $"{GlobalSettings.baseEndpoint}/clients/{client.ClientId}";
+            response = await httpClient.DeleteAsync(url);
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> MakeTrainer(int? id)
+        {
+            if (GlobalSettings.CurrentUserRole != "Admin")
+                return RedirectToAction("Index");
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Client client = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/GetClientById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+            }
+
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            // Add client to trainer table.
+            Trainer trainer = new Trainer();
+            trainer.FirstName = client.FirstName;
+            trainer.LastName = client.LastName;
+            trainer.Email = client.Email;
+            trainer.PhoneNumber = client.PhoneNumber;
+            trainer.IdentityUserId = client.IdentityUserId;
+
+            string jsonForPost = JsonConvert.SerializeObject(trainer);
+            url = $"{GlobalSettings.baseEndpoint}/trainers";
+            response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+
+            // Delete client from client table.
+            url = $"{GlobalSettings.baseEndpoint}/clients/{client.ClientId}";
+            response = await httpClient.DeleteAsync(url);
+            return RedirectToAction("Index");
+        }
+
         private async Task<bool> ClientExists(int? id)
         {
             HttpClient httpClient = new HttpClient();
