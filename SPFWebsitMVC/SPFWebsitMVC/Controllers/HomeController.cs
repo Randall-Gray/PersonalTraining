@@ -46,11 +46,11 @@ namespace SPFWebsitMVC.Controllers
             }
             if (GlobalSettings.CurrentUserRole == "Trainer")
             {
-                return View("Index", "Trainers");
+                return RedirectToAction("Index", "Trainers");
             }
             if (GlobalSettings.CurrentUserRole == "Client")
             {
-                return View("Index", "Clients");
+                return RedirectToAction("Index", "Clients");
             }
 
             return View();
@@ -81,6 +81,13 @@ namespace SPFWebsitMVC.Controllers
         {
             ready = false;
             string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // Not logged in, stay home.
+            if (userId == null)
+            {
+                GlobalSettings.CurrentUserRole = null;
+                ready = true;
+                return RedirectToAction("Index", "Home");
+            }
             HttpClient httpClient = new HttpClient();
             string url = $"{GlobalSettings.baseEndpoint}/admins/{userId}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
@@ -107,9 +114,10 @@ namespace SPFWebsitMVC.Controllers
                 return RedirectToAction("Index", "Clients");
             }
 
-            GlobalSettings.CurrentUserRole = null;
+            // Logged in so default to client.
+            GlobalSettings.CurrentUserRole = "Client";
             ready = true;
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Clients");
         }
     }
 }

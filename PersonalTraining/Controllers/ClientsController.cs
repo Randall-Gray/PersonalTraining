@@ -83,7 +83,7 @@ namespace PersonalTraining.Controllers
             _context.Clients.Add(client);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetClient", new { id = client.ClientId }, client);
+            return CreatedAtAction("GetClient", new { identityValue = client.IdentityUserId }, client);
         }
 
         // DELETE: api/Clients/5

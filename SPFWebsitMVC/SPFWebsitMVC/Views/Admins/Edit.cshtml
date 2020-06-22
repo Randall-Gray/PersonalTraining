@@ -5,9 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<h1>Edit Admin</h1>
 
-<h4>Admin</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -24,21 +23,22 @@
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>*@
+            <div class="form-group">
+            <label asp-for="Email" class="control-label"></label>
+            <input asp-for="Email" class="form-control" readonly/>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
             <div class="form-group">
                 <label asp-for="PhoneNumber" class="control-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
+            <input type="hidden" asp-for="IdentityUserId" />
             @*<div class="form-group">
-                <label asp-for="IdentityUserId" class="control-label"></label>
-                <input asp-for="IdentityUserId" class="form-control" />
-                <span asp-validation-for="IdentityUserId" class="text-danger"></span>
-            </div>*@
+            <label asp-for="IdentityUserId" class="control-label"></label>
+            <input asp-for="IdentityUserId" class="form-control" />
+            <span asp-validation-for="IdentityUserId" class="text-danger"></span>
+        </div>*@
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

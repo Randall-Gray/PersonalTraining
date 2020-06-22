@@ -83,7 +83,7 @@ namespace PersonalTraining.Controllers
             _context.Admins.Add(admin);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAdmin", new { id = admin.AdminId }, admin);
+            return CreatedAtAction("GetAdmin", new { identityValue = admin.IdentityUserId }, admin);
         }
 
         // DELETE: api/Admins/5

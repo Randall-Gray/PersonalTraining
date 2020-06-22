@@ -5,9 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<h1>Edit Client Profile</h1>
 
-<h4>Client</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -26,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <input asp-for="Email" class="form-control" readonly />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -34,31 +33,37 @@
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <input type="hidden" asp-for="BalanceOwed" />
+            @*<div class="form-group">
                 <label asp-for="BalanceOwed" class="control-label"></label>
                 <input asp-for="BalanceOwed" class="form-control" />
                 <span asp-validation-for="BalanceOwed" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            </div>*@
+            <input type="hidden" asp-for="Goal" />
+            @*<div class="form-group">
                 <label asp-for="Goal" class="control-label"></label>
                 <input asp-for="Goal" class="form-control" />
                 <span asp-validation-for="Goal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            </div>*@
+            <input type="hidden" asp-for="FavoriteVideo1" />
+            @*<div class="form-group">
                 <label asp-for="FavoriteVideo1" class="control-label"></label>
                 <input asp-for="FavoriteVideo1" class="form-control" />
                 <span asp-validation-for="FavoriteVideo1" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            </div>*@
+            <input type="hidden" asp-for="FavoriteVideo2" />
+            @*<div class="form-group">
                 <label asp-for="FavoriteVideo2" class="control-label"></label>
                 <input asp-for="FavoriteVideo2" class="form-control" />
                 <span asp-validation-for="FavoriteVideo2" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            </div>*@
+            <input type="hidden" asp-for="FavoriteVideo3" />
+            @*<div class="form-group">
                 <label asp-for="FavoriteVideo3" class="control-label"></label>
                 <input asp-for="FavoriteVideo3" class="form-control" />
                 <span asp-validation-for="FavoriteVideo3" class="text-danger"></span>
-            </div>
+            </div>*@
+            <input type="hidden" asp-for="IdentityUserId" />
             @*<div class="form-group">
                 <label asp-for="IdentityUserId" class="control-label"></label>
                 <input asp-for="IdentityUserId" class="form-control" />

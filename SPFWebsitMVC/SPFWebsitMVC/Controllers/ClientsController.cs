@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SPFWebsitMVC.Data;
 using SPFWebsitMVC.Models;
 
@@ -22,7 +27,38 @@ namespace SPFWebsitMVC.Controllers
         // GET: Clients
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Client.ToListAsync());
+            List<Client> Clients = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/";
+            HttpResponseMessage response;
+
+            // Display all clients
+            if (GlobalSettings.CurrentUserRole == "Admin")
+            {
+                response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    Clients = JsonConvert.DeserializeObject<List<Client>>(jsonResponse);
+                }
+                return View(Clients);
+            }
+            // Only display the logged in client
+            Client client = null;
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            url += userId;
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+                Clients = new List<Client>();
+                Clients.Add(client);
+            }
+            if (Clients == null)
+                return RedirectToAction("Create");
+
+            return View(Clients);
         }
 
         // GET: Clients/Details/5
@@ -33,8 +69,17 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Client
-                .FirstOrDefaultAsync(m => m.ClientId == id);
+            Client client = null;
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+            }
+
             if (client == null)
             {
                 return NotFound();
@@ -46,7 +91,10 @@ namespace SPFWebsitMVC.Controllers
         // GET: Clients/Create
         public IActionResult Create()
         {
-            return View();
+            Client client = new Client();
+            client.IdentityUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            client.Email = this.User.Identity.Name;  // Display email but don't allow editing.
+            return View(client);
         }
 
         // POST: Clients/Create
@@ -58,9 +106,15 @@ namespace SPFWebsitMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                string jsonForPost = JsonConvert.SerializeObject(client);
+                HttpClient httpClient = new HttpClient();
+                string url = $"{GlobalSettings.baseEndpoint}/clients";
+                HttpResponseMessage response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    return RedirectToAction("Index", "Clients");
+                }
             }
             return View(client);
         }
@@ -73,11 +127,22 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Client.FindAsync(id);
+            Client client = null;
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+            }
+
             if (client == null)
             {
                 return NotFound();
             }
+
             return View(client);
         }
 
@@ -97,12 +162,20 @@ namespace SPFWebsitMVC.Controllers
             {
                 try
                 {
-                    _context.Update(client);
-                    await _context.SaveChangesAsync();
+                    //string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    //client.IdentityUserId = userId;
+                    string jsonForPost = JsonConvert.SerializeObject(client);
+                    HttpClient httpClient = new HttpClient();
+                    string url = $"{GlobalSettings.baseEndpoint}/clients/{id}";
+                    HttpResponseMessage response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClientExists(client.ClientId))
+                    if (await ClientExists() == false)
                     {
                         return NotFound();
                     }
@@ -111,7 +184,7 @@ namespace SPFWebsitMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             return View(client);
         }
@@ -124,8 +197,17 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Client
-                .FirstOrDefaultAsync(m => m.ClientId == id);
+            Client client = null;
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+            }
+
             if (client == null)
             {
                 return NotFound();
@@ -145,9 +227,18 @@ namespace SPFWebsitMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ClientExists(int id)
+        private async Task<bool> ClientExists()
         {
-            return _context.Client.Any(e => e.ClientId == id);
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
