@@ -28,9 +28,9 @@ namespace PersonalTraining.Controllers
             return await _context.Trainers.ToListAsync();
         }
 
-        // GET: api/Trainers/5
-        [HttpGet("{identityValue}")]
-        public async Task<ActionResult<Trainer>> GetTrainer(string identityValue)
+        // GET: api/Trainers/GetTrainerByIdentityValue/5
+        [HttpGet("GetTrainerByIdentityValue/{identityValue}")]
+        public async Task<ActionResult<Trainer>> GetTrainerByIdentityValue(string identityValue)
         {
             var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.IdentityUserId == identityValue);
 
@@ -40,6 +40,20 @@ namespace PersonalTraining.Controllers
             }
 
             return trainer;
+        }
+
+        // GET: api/Trainers/GetTrainerById/5
+        [HttpGet("GetTrainerById/{id}")]
+        public async Task<ActionResult<Client>> GetTrainerById(int id)
+        {
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == id);
+
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            return client;
         }
 
         // PUT: api/Trainers/5

@@ -28,9 +28,9 @@ namespace PersonalTraining.Controllers
             return await _context.Admins.ToListAsync();
         }
 
-        // GET: api/Admins/5
-        [HttpGet("{identityValue}")]
-        public async Task<ActionResult<Admin>> GetAdmin(string identityValue)
+        // GET: api/Admins/GetAdminByIdentityValue/5
+        [HttpGet("GetAdminByIdentityValue/{identityValue}")]
+        public async Task<ActionResult<Admin>> GetAdminByIdentityValue(string identityValue)
         {
             var admin = await _context.Admins.FirstOrDefaultAsync(a => a.IdentityUserId == identityValue);
 
@@ -40,6 +40,20 @@ namespace PersonalTraining.Controllers
             }
 
             return admin;
+        }
+
+        // GET: api/Admins/GetAdminById/5
+        [HttpGet("GetAdminById/{id}")]
+        public async Task<ActionResult<Client>> GetAdminById(int id)
+        {
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == id);
+
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            return client;
         }
 
         // PUT: api/Admins/5

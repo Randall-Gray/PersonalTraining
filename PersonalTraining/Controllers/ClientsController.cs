@@ -28,11 +28,25 @@ namespace PersonalTraining.Controllers
             return await _context.Clients.ToListAsync();
         }
 
-        // GET: api/Clients/5
-        [HttpGet("{identityValue}")]
-        public async Task<ActionResult<Client>> GetClient(string identityValue)
+        // GET: api/Clients/GetClientByIdentityValue/5
+        [HttpGet("GetClientByIdentityValue/{identityValue}")]
+        public async Task<ActionResult<Client>> GetClientByIdentityValue(string identityValue)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(c => c.IdentityUserId == identityValue);
+
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            return client;
+        }
+
+        // GET: api/Clients/GetClientById/5
+        [HttpGet("GetClientById/{id}")]
+        public async Task<ActionResult<Client>> GetClientById(int id)
+        {
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == id);
 
             if (client == null)
             {

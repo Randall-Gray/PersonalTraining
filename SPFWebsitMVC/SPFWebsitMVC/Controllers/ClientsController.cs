@@ -46,8 +46,13 @@ namespace SPFWebsitMVC.Controllers
             // Only display the logged in client
             Client client = null;
             string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            url += userId;
+            url += "GetClientByIdentityValue/" + userId;
             response = await httpClient.GetAsync(url);
+            url = $"{GlobalSettings.baseEndpoint}/clients/";
+            int id = 1;
+            url += "GetClientById/" + id;
+            response = await httpClient.GetAsync(url);
+
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
@@ -72,7 +77,7 @@ namespace SPFWebsitMVC.Controllers
             Client client = null;
             string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/clients/{userId}";
+            string url = $"{GlobalSettings.baseEndpoint}/clients/{id}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -112,7 +117,7 @@ namespace SPFWebsitMVC.Controllers
                 HttpResponseMessage response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
                 if (response.IsSuccessStatusCode)
                 {
-                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    //string jsonResponse = await response.Content.ReadAsStringAsync();
                     return RedirectToAction("Index", "Clients");
                 }
             }
@@ -168,10 +173,10 @@ namespace SPFWebsitMVC.Controllers
                     HttpClient httpClient = new HttpClient();
                     string url = $"{GlobalSettings.baseEndpoint}/clients/{id}";
                     HttpResponseMessage response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string jsonResponse = await response.Content.ReadAsStringAsync();
-                    }
+                    //if (response.IsSuccessStatusCode)
+                    //{
+                    //    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    //}
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -219,12 +224,17 @@ namespace SPFWebsitMVC.Controllers
         // POST: Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var client = await _context.Client.FindAsync(id);
-            _context.Client.Remove(client);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/{id}";
+            HttpResponseMessage response = await httpClient.DeleteAsync(url);
+            return RedirectToAction("Index");
         }
 
         private async Task<bool> ClientExists()
