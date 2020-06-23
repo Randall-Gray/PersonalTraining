@@ -33,7 +33,7 @@ namespace SPFWebsitMVC.Controllers
             HttpResponseMessage response;
 
             // Display all clients
-            if (GlobalSettings.CurrentUserRole == "Admin")
+            if (GlobalSettings.CurrentUserRole == "Admin" || GlobalSettings.CurrentUserRole == "Trainer")
             {
                 response = await httpClient.GetAsync(url);
                 if (response.IsSuccessStatusCode)
