@@ -1,12 +1,13 @@
 ﻿@model SPFWebsitMVC.Models.Trainer
 
 @{
-    ViewData["Title"] = "Trainer - Details";
+    ViewData["Title"] = "Trainer - Delete";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Trainer Details</h1>
+<h1>Delete Trainer</h1>
 
+<h3>Are you sure you want to delete this?</h3>
 <div>
     <hr />
     <dl class="row">
@@ -41,8 +42,10 @@
             @Html.DisplayFor(model => model.IdentityUserId)
         </dd>*@
     </dl>
-</div>
-<div>
-    <a asp-controller="Trainers" asp-action="Edit" asp-route-id="@Model.TrainerId">Edit</a> |
-    <a asp-controller="Trainers" asp-action="Index">Back to Trainer Home</a>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="TrainerId" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-controller="AdminTrainers" asp-action="Index">Back to Trainer Home</a>
+    </form>
 </div>

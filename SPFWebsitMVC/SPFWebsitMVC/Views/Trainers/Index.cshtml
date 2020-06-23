@@ -7,6 +7,11 @@
 
 <h1>Trainer Home</h1>
 
+<center>
+    <div id="BroadcastMessages">
+        <pre></pre>
+    </div>
+</center>
 <p>
     @*<a asp-action="Create">Create New</a>*@
 </p>
@@ -50,10 +55,10 @@
                 @Html.DisplayFor(modelItem => item.IdentityUserId)
             </td>*@
         <td>
-            <a asp-action="Edit" asp-route-id="@item.TrainerId">Edit</a> |
-            <a asp-action="Details" asp-route-id="@item.TrainerId">Details</a> |
-            <a asp-action="Delete" asp-route-id="@item.TrainerId">Delete</a>  |
-            <a asp-controller="Trainers" asp-action="MakeAdmin" asp-route-id="@item.TrainerId">(->Admin)</a> 
+            <a asp-controller="Trainers" asp-action="Edit" asp-route-id="@item.TrainerId">Edit</a> |
+            <a asp-controller="Trainers" asp-action="Details" asp-route-id="@item.TrainerId">Details</a> |
+            <a asp-controller="Trainers" asp-action="Delete" asp-route-id="@item.TrainerId">Delete</a>
+            @*<a asp-controller="Trainers" asp-action="MakeAdmin" asp-route-id="@item.TrainerId">(Admin)</a>*@ 
         </td>
         </tr>
 }

@@ -1,16 +1,19 @@
-﻿@model IEnumerable<SPFWebsitMVC.Models.Admin>
+﻿@model IEnumerable<SPFWebsitMVC.Models.Trainer>
 
 @{
-    ViewData["Title"] = "Admin - Home";
+    ViewData["Title"] = "Trainer - Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Admin Home</h1>
+<h1>Trainer Home</h1>
 
+<center>
+    <div id="BroadcastMessages">
+        <pre></pre>
+    </div>
+</center>
 <p>
-    <a asp-controller="AdminClients" asp-action="Index">Clients</a>  |
-    <a asp-controller="AdminTrainers" asp-action="Index">Trainers</a>   |
-    <a asp-controller="BroadcastMessages" asp-action="Index">Broadcast Messages</a>
+    @*<a asp-action="Create">Create New</a>*@
 </p>
 <table class="table">
     <thead>
@@ -51,11 +54,12 @@
             @*<td>
                 @Html.DisplayFor(modelItem => item.IdentityUserId)
             </td>*@
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AdminId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AdminId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AdminId">Delete</a>
-            </td>
+        <td>
+            <a asp-controller="AdminTrainers" asp-action="Edit" asp-route-id="@item.TrainerId">Edit</a> |
+            <a asp-controller="AdminTrainers" asp-action="Details" asp-route-id="@item.TrainerId">Details</a> |
+            <a asp-controller="AdminTrainers" asp-action="Delete" asp-route-id="@item.TrainerId">Delete</a>  |
+            <a asp-controller="AdminTrainers" asp-action="MakeAdmin" asp-route-id="@item.TrainerId">(Admin)</a> 
+        </td>
         </tr>
 }
     </tbody>
