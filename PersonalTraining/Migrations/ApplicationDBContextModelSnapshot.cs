@@ -98,6 +98,9 @@ namespace PersonalTraining.Migrations
                     b.Property<string>("PosterName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("BroadcastMessageId");
 
                     b.ToTable("BroadcastMessages");

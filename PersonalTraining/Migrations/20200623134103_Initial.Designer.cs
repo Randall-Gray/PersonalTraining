@@ -10,7 +10,7 @@ using PersonalTraining.Data;
 namespace PersonalTraining.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20200620133713_Initial")]
+    [Migration("20200623134103_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,6 +98,9 @@ namespace PersonalTraining.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("PosterName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BroadcastMessageId");

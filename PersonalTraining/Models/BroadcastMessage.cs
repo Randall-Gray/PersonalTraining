@@ -17,9 +17,12 @@ namespace PersonalTraining.Models
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DatePosted { get; set; }
 
+        [Display(Name = "Days Valid")]
         public int NumDays { get; set; }
         
         [Display(Name = "Posted By")]
         public string PosterName { get; set; }
+
+        public string Status { get; set; }
     }
 }

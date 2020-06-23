@@ -33,7 +33,8 @@ namespace PersonalTraining.Migrations
                     Message = table.Column<string>(nullable: true),
                     DatePosted = table.Column<DateTime>(nullable: false),
                     NumDays = table.Column<int>(nullable: false),
-                    PosterName = table.Column<string>(nullable: true)
+                    PosterName = table.Column<string>(nullable: true),
+                    Status = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

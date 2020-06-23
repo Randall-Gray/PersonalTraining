@@ -25,7 +25,16 @@ namespace PersonalTraining.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BroadcastMessage>>> GetBroadcastMessages()
         {
+            await UpdateBroadcastMessagesStatus();
             return await _context.BroadcastMessages.ToListAsync();
+        }
+
+        // GET: api/BroadcastMessages/GetCurrentBroadcastMessages
+        [HttpGet("GetCurrentBroadcastMessages")]
+        public async Task<ActionResult<IEnumerable<BroadcastMessage>>> GetCurrentBroadcastMessages()
+        {
+            await UpdateBroadcastMessagesStatus();
+            return await _context.BroadcastMessages.Where(m => m.Status == "Current").ToListAsync();
         }
 
         // GET: api/BroadcastMessages/5
@@ -105,6 +114,31 @@ namespace PersonalTraining.Controllers
         private bool BroadcastMessageExists(int id)
         {
             return _context.BroadcastMessages.Any(e => e.BroadcastMessageId == id);
+        }
+
+        private async Task UpdateBroadcastMessagesStatus()
+        {
+            DateTime nowDate = DateTime.Now;
+            DateTime expireDate;
+            string status = "";
+            // Even update "Expired" messages since they could have been edited to make current.
+            List<BroadcastMessage> Messages = _context.BroadcastMessages.ToList();
+
+            foreach(BroadcastMessage message in Messages)
+            {
+                expireDate = message.DatePosted.AddDays(message.NumDays-1);
+                if (expireDate.Year < nowDate.Year || 
+                    (expireDate.Year == nowDate.Year && expireDate.DayOfYear < nowDate.DayOfYear))
+                    status = "Expired";
+                else if (message.DatePosted.Year > nowDate.Year ||
+                        (message.DatePosted.Year == nowDate.Year && message.DatePosted.DayOfYear > nowDate.DayOfYear))
+                    status = "Future";
+                else status = "Current";
+
+                message.Status = status;
+                _context.Entry(message).State = EntityState.Modified;
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }
