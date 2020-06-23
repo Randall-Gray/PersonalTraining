@@ -29,6 +29,14 @@ namespace PersonalTraining
         {
             services.AddDbContext<ApplicationDBContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("PersonalTrainingContext")));
             services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +48,8 @@ namespace PersonalTraining
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 
