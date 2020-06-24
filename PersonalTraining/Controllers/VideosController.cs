@@ -28,6 +28,13 @@ namespace PersonalTraining.Controllers
             return await _context.Videos.ToListAsync();
         }
 
+        // GET: api/Videos/GetPostedVideos
+        [HttpGet("GetPostedVideos")]
+        public async Task<ActionResult<IEnumerable<Video>>> GetPostedVideos()
+        {
+            return await _context.Videos.Where(v => v.Post == true).ToListAsync();
+        }
+
         // GET: api/Videos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Video>> GetVideo(int id)

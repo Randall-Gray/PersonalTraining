@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SPFWebsitMVC.Data;
 using SPFWebsitMVC.Models;
 
@@ -22,7 +25,32 @@ namespace SPFWebsitMVC.Controllers
         // GET: Videos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Video.ToListAsync());
+            List<Video> Videos = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/videos/";
+            HttpResponseMessage response;
+
+            // Display all Videos
+            if (GlobalSettings.CurrentUserRole == "Admin" || GlobalSettings.CurrentUserRole == "Trainer")
+            {
+                response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    Videos = JsonConvert.DeserializeObject<List<Video>>(jsonResponse);
+                }
+                return View(Videos);
+            }
+            // Only display the posted Videos
+            url += "GetPostedVideos/";
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                Videos = JsonConvert.DeserializeObject<List<Video>>(jsonResponse);
+            }
+
+            return View(Videos);
         }
 
         // GET: Videos/Details/5
@@ -33,8 +61,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var video = await _context.Video
-                .FirstOrDefaultAsync(m => m.VideoId == id);
+            Video video = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/videos/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                video = JsonConvert.DeserializeObject<Video>(jsonResponse);
+            }
+
             if (video == null)
             {
                 return NotFound();
@@ -58,9 +94,14 @@ namespace SPFWebsitMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(video);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                string jsonForPost = JsonConvert.SerializeObject(video);
+                HttpClient httpClient = new HttpClient();
+                string url = $"{GlobalSettings.baseEndpoint}/videos";
+                HttpResponseMessage response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index", "Videos");
+                }
             }
             return View(video);
         }
@@ -73,7 +114,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var video = await _context.Video.FindAsync(id);
+            Video video = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/videos/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                video = JsonConvert.DeserializeObject<Video>(jsonResponse);
+            }
+
             if (video == null)
             {
                 return NotFound();
@@ -97,12 +147,14 @@ namespace SPFWebsitMVC.Controllers
             {
                 try
                 {
-                    _context.Update(video);
-                    await _context.SaveChangesAsync();
+                    string jsonForPost = JsonConvert.SerializeObject(video);
+                    HttpClient httpClient = new HttpClient();
+                    string url = $"{GlobalSettings.baseEndpoint}/videos/{id}";
+                    HttpResponseMessage response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VideoExists(video.VideoId))
+                    if (await VideoExists(id) == false)
                     {
                         return NotFound();
                     }
@@ -111,7 +163,7 @@ namespace SPFWebsitMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             return View(video);
         }
@@ -124,8 +176,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var video = await _context.Video
-                .FirstOrDefaultAsync(m => m.VideoId == id);
+            Video video = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/videos/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                video = JsonConvert.DeserializeObject<Video>(jsonResponse);
+            }
+
             if (video == null)
             {
                 return NotFound();
@@ -137,17 +197,30 @@ namespace SPFWebsitMVC.Controllers
         // POST: Videos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var video = await _context.Video.FindAsync(id);
-            _context.Video.Remove(video);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/videos/{id}";
+            HttpResponseMessage response = await httpClient.DeleteAsync(url);
+            return RedirectToAction("Index");
         }
 
-        private bool VideoExists(int id)
+        private async Task<bool> VideoExists(int? id)
         {
-            return _context.Video.Any(e => e.VideoId == id);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/videos/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
