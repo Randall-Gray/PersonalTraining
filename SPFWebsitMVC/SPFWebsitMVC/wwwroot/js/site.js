@@ -23,3 +23,5 @@ function GetBroadcastMessages() {
 }
 
 $('#BroadcastMessages').ready(GetBroadcastMessages);
+$('#FAQLogin').ready(GetClientFAQs);
+$('#FAQNonLogin').ready(GetGeneralFAQs);

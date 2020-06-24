@@ -308,6 +308,11 @@ namespace SPFWebsitMVC.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult FAQLogin()
+        {
+            return View();
+        }
+
         private async Task<bool> ClientExists(int? id)
         {
             HttpClient httpClient = new HttpClient();

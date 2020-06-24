@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SPFWebsitMVC.Data;
 using SPFWebsitMVC.Models;
 
@@ -22,7 +25,32 @@ namespace SPFWebsitMVC.Controllers
         // GET: FAQs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.FAQ.ToListAsync());
+            List<FAQ> FAQs = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/faqs/";
+            HttpResponseMessage response;
+
+            // Display all FAQs
+            if (GlobalSettings.CurrentUserRole == "Admin" || GlobalSettings.CurrentUserRole == "Trainer")
+            {
+                response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    FAQs = JsonConvert.DeserializeObject<List<FAQ>>(jsonResponse);
+                }
+                return View(FAQs);
+            }
+            // Only display the general FAQs
+            url += "GetGeneralFAQs/";
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                FAQs = JsonConvert.DeserializeObject<List<FAQ>>(jsonResponse);
+            }
+
+            return View(FAQs);
         }
 
         // GET: FAQs/Details/5
@@ -33,8 +61,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var fAQ = await _context.FAQ
-                .FirstOrDefaultAsync(m => m.FAQId == id);
+            FAQ fAQ = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/faqs/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                fAQ = JsonConvert.DeserializeObject<FAQ>(jsonResponse);
+            }
+
             if (fAQ == null)
             {
                 return NotFound();
@@ -58,9 +94,14 @@ namespace SPFWebsitMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(fAQ);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                string jsonForPost = JsonConvert.SerializeObject(fAQ);
+                HttpClient httpClient = new HttpClient();
+                string url = $"{GlobalSettings.baseEndpoint}/faqs";
+                HttpResponseMessage response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index", "FAQs");
+                }
             }
             return View(fAQ);
         }
@@ -73,7 +114,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var fAQ = await _context.FAQ.FindAsync(id);
+            FAQ fAQ = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/faqs/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                fAQ = JsonConvert.DeserializeObject<FAQ>(jsonResponse);
+            }
+
             if (fAQ == null)
             {
                 return NotFound();
@@ -97,12 +147,14 @@ namespace SPFWebsitMVC.Controllers
             {
                 try
                 {
-                    _context.Update(fAQ);
-                    await _context.SaveChangesAsync();
+                    string jsonForPost = JsonConvert.SerializeObject(fAQ);
+                    HttpClient httpClient = new HttpClient();
+                    string url = $"{GlobalSettings.baseEndpoint}/faqs/{id}";
+                    HttpResponseMessage response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FAQExists(fAQ.FAQId))
+                    if (await FAQExists(id) == false)
                     {
                         return NotFound();
                     }
@@ -111,7 +163,7 @@ namespace SPFWebsitMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             return View(fAQ);
         }
@@ -124,8 +176,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var fAQ = await _context.FAQ
-                .FirstOrDefaultAsync(m => m.FAQId == id);
+            FAQ fAQ = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/faqs/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                fAQ = JsonConvert.DeserializeObject<FAQ>(jsonResponse);
+            }
+
             if (fAQ == null)
             {
                 return NotFound();
@@ -137,17 +197,30 @@ namespace SPFWebsitMVC.Controllers
         // POST: FAQs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var fAQ = await _context.FAQ.FindAsync(id);
-            _context.FAQ.Remove(fAQ);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/faqs/{id}";
+            HttpResponseMessage response = await httpClient.DeleteAsync(url);
+            return RedirectToAction("Index");
         }
 
-        private bool FAQExists(int id)
+        private async Task<bool> FAQExists(int? id)
         {
-            return _context.FAQ.Any(e => e.FAQId == id);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/faqs/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

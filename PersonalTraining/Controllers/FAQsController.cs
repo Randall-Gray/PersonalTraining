@@ -28,18 +28,32 @@ namespace PersonalTraining.Controllers
             return await _context.FAQs.ToListAsync();
         }
 
+        // GET: api/FAQs/GetGeneralFAQs
+        [HttpGet("GetGeneralFAQs")]
+        public async Task<ActionResult<IEnumerable<FAQ>>> GetGeneralFAQs()
+        {
+            return await _context.FAQs.Where(f => f.General == true).ToListAsync();
+        }
+
+        // GET: api/FAQs/GetClientFAQs
+        [HttpGet("GetClientFAQs")]
+        public async Task<ActionResult<IEnumerable<FAQ>>> GetClientFAQs()
+        {
+            return await _context.FAQs.Where(f => f.General == false).ToListAsync();
+        }
+
         // GET: api/FAQs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<FAQ>> GetFAQ(int id)
         {
-            var fAQ = await _context.FAQs.FindAsync(id);
+            var FAQ = await _context.FAQs.FindAsync(id);
 
-            if (fAQ == null)
+            if (FAQ == null)
             {
                 return NotFound();
             }
 
-            return fAQ;
+            return FAQ;
         }
 
         // PUT: api/FAQs/5

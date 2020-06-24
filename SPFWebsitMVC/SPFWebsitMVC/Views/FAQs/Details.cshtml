@@ -1,14 +1,13 @@
 ﻿@model SPFWebsitMVC.Models.FAQ
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "FAQ - Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<h1>FAQ Details</h1>
 
 <div>
-    <h4>FAQ</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -51,5 +50,5 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.FAQId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Back to FAQ Home</a>
 </div>
