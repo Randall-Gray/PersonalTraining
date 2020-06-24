@@ -13,34 +13,26 @@ using SPFWebsitMVC.Models;
 
 namespace SPFWebsitMVC.Controllers
 {
-    public class VideosController : Controller
+    public class ClientVideosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private static int clientId;
 
-        public VideosController(ApplicationDbContext context)
+        public ClientVideosController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         // GET: Videos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int ClientId)
         {
+            clientId = ClientId;
+
             List<Video> Videos = null;
             HttpClient httpClient = new HttpClient();
             string url = $"{GlobalSettings.baseEndpoint}/videos/";
             HttpResponseMessage response;
 
-            // Display all Videos
-            if (GlobalSettings.CurrentUserRole == "Admin" || GlobalSettings.CurrentUserRole == "Trainer")
-            {
-                response = await httpClient.GetAsync(url);
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonResponse = await response.Content.ReadAsStringAsync();
-                    Videos = JsonConvert.DeserializeObject<List<Video>>(jsonResponse);
-                }
-                return View(Videos);
-            }
             // Only display the posted Videos
             url += "GetPostedVideos/";
             response = await httpClient.GetAsync(url);
@@ -77,6 +69,12 @@ namespace SPFWebsitMVC.Controllers
             }
 
             return View(video);
+        }
+
+        // Get: Videos/MakeFavorite/5
+        public IActionResult MakeFavorite(int? id)
+        {
+            return RedirectToAction("Index", "ClientVideos");
         }
 
         // GET: Videos/Create

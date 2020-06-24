@@ -28,6 +28,22 @@ namespace PersonalTraining.Controllers
             return await _context.Conversations.ToListAsync();
         }
 
+        //// GET: api/Conversations/GetConversationsByTrainerId/5
+        //[HttpGet("GetConversationsByTrainerId/{id}")]
+        //public async Task<ActionResult<IEnumerable<Conversation>>> GetConversationsByTrainerId(int id)
+        //{
+        //    var conversations = _context.Conversations.Include(c => c.Client).Include(t => t.Trainer)
+        //                         .Where(c => c.Trainer.TrainerId == id);
+
+        //    if (conversations == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return conversations;
+        //}
+
+
         // GET: api/Conversations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Conversation>> GetConversation(int id)
