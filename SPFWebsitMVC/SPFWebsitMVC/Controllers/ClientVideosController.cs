@@ -75,6 +75,8 @@ namespace SPFWebsitMVC.Controllers
         // Get: Videos/MakeFavorite/5
         public async Task<IActionResult> MakeFavorite(int? id)
         {
+            int newUse = 1;
+
             // Get the client
             Client client = null;
             HttpClient httpClient = new HttpClient();
@@ -97,8 +99,13 @@ namespace SPFWebsitMVC.Controllers
                 client.FavoriteVideo2 = (int)id;
             else if (client.FavoriteVideo3 == 0)
                 client.FavoriteVideo3 = (int)id;
-            else
-                client.FavoriteVideo1 = (int)id;  // if all are full, replace #1
+            else  // if all are full, replace #1
+            {
+                if (client.FavoriteVideo1 == (int)id)
+                    newUse = 0;
+                else
+                    client.FavoriteVideo1 = (int)id;  
+            }
 
             // Put the client back.
             string jsonForPost = JsonConvert.SerializeObject(client);
@@ -122,7 +129,7 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            video.CurrentUse++;
+            video.CurrentUse += newUse;
             video.TotalUse++;
 
             // Put the video back.
