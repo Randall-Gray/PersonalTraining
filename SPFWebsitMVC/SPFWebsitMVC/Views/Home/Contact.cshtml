@@ -4,9 +4,82 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Contact</h1><br />
-<p>
-    Contact Starting Point Fitness at Email: Fitness.StartingPoint@gmail.com
-</p>
+<div class="row">
+    <img id="bannerNonLogin" style="width:100%; height:300px;" src="~/images/goals2.jpg" atl="SPF Goals">
+</div>
+<div class="row" id="bodyrow">
+    <div class="col-sm-2" style="background-color:lightsteelblue">
+        <center>
+            <br /><br />
+            <img id="SPTLogo" style="width:100%" src="~/images/SPFLogo.jpg" alt="SPF Logo">
+            <br /><br /><br />
+            <h6> Fitness Training</h6>
+            <h6> Health Coaching</h6>
+            <h6> (Virtual/In-person)</h6>
+            <h6> Physical Therapy</h6>
+            <h6> Dry Needling</h6>
+            <br />
+        </center>
+    </div>
+    <div class="col-sm-10">
+        <div class="container" style="margin: 25px">
+            <h1>Contact SPF</h1>
+            <br />
+            <p>
+                Starting Point Fitness is currently holding in-person sessions at Surge Martial Arts
+                Studio located at W188N11927 Maple Rd, Germantown, WI 53022.  Sessions are on Mondays
+                and Wednesdays.  Contact us by email or phone call to schedule an appointment; or stop
+                by to check out the gym, if we are there, we would be happy to talk with you.<br /><br />
 
+                Virtual on-line sessions using Zoom are available most weekdays.  Morning and evenings 
+                sessions are available.  <br /><br />
 
+                For more information, schedules, and prices, please contact us by email or phone call.
+                <br /><br />
+                Email: Fitness.StartingPoint@gmail.com<br />
+                Phone: (414) 702-4229<br /><br />
+            </p>
+
+            <h1>Location</h1>
+
+            <div id="googleMap" style="width:400px;height:400px;"></div>
+
+            <script>
+                function myMap() {
+                    var mapProp =
+                    {
+                        zoom: 13,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+
+                    var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+                    var geocoder = new google.maps.Geocoder();
+
+                    geocodeAddress(geocoder, map);
+                }
+
+                function geocodeAddress(geocoder, resultsMap) {
+                    var address = "W188N11927 Maple Rd, Germantown, WI 53022";
+                    geocoder.geocode({ 'address': address },
+                        function (results, status) {
+                            if (status === 'OK') {
+                                resultsMap.setCenter(results[0].geometry.location);
+                                results.forEach(function (item, index) {
+                                    var marker = new google.maps.Marker({
+                                        map: resultsMap,
+                                        position: item.geometry.location
+                                    });
+                                })
+                            } else {
+                                alert('Geocode was not successful for the following reason: ' + status);
+                            }
+                        })
+                }
+            </script>
+
+            <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXpiwMal6AGdjGuWF_DgVkrZnLAg-0fu0&callback=myMap"
+                    type="text/javascript"></script>
+        </div>
+    </div>
+</div>
