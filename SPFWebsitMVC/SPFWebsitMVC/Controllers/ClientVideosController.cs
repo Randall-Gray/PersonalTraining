@@ -16,7 +16,7 @@ namespace SPFWebsitMVC.Controllers
     public class ClientVideosController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private static int clientId;
+        private static int? clientId;
 
         public ClientVideosController(ApplicationDbContext context)
         {
@@ -24,9 +24,10 @@ namespace SPFWebsitMVC.Controllers
         }
 
         // GET: Videos
-        public async Task<IActionResult> Index(int ClientId)
+        public async Task<IActionResult> Index(int? id)
         {
-            clientId = ClientId;
+            if (id != null)
+                clientId = id;
 
             List<Video> Videos = null;
             HttpClient httpClient = new HttpClient();
@@ -72,7 +73,7 @@ namespace SPFWebsitMVC.Controllers
         }
 
         // Get: Videos/MakeFavorite/5
-        public async Task<IActionResult> MakeFavorite(int videoId)
+        public async Task<IActionResult> MakeFavorite(int? id)
         {
             // Get the client
             Client client = null;
@@ -91,13 +92,13 @@ namespace SPFWebsitMVC.Controllers
             }
 
             if (client.FavoriteVideo1 == 0)
-                client.FavoriteVideo1 = videoId;
+                client.FavoriteVideo1 = (int)id;
             else if (client.FavoriteVideo2 == 0)
-                client.FavoriteVideo2 = videoId;
+                client.FavoriteVideo2 = (int)id;
             else if (client.FavoriteVideo3 == 0)
-                client.FavoriteVideo3 = videoId;
+                client.FavoriteVideo3 = (int)id;
             else
-                client.FavoriteVideo1 = videoId;  // if all are full, replace #1
+                client.FavoriteVideo1 = (int)id;  // if all are full, replace #1
 
             // Put the client back.
             string jsonForPost = JsonConvert.SerializeObject(client);
@@ -108,7 +109,7 @@ namespace SPFWebsitMVC.Controllers
             // Get the video
             Video video = null;
             httpClient = new HttpClient();
-            url = $"{GlobalSettings.baseEndpoint}/videos/{videoId}";
+            url = $"{GlobalSettings.baseEndpoint}/videos/{id}";
             response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -127,7 +128,7 @@ namespace SPFWebsitMVC.Controllers
             // Put the video back.
             jsonForPost = JsonConvert.SerializeObject(video);
             httpClient = new HttpClient();
-            url = $"{GlobalSettings.baseEndpoint}/videos/{videoId}";
+            url = $"{GlobalSettings.baseEndpoint}/videos/{id}";
             response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
 
             return RedirectToAction("Index", "ClientVideos");
