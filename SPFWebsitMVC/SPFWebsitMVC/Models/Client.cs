@@ -28,13 +28,13 @@ namespace SPFWebsitMVC.Models
 
         public string Goal { get; set; }
 
-        [Display(Name = "Favoriate Video 1")]
+        [Display(Name = "Favorite Video 1")]
         public int FavoriteVideo1 { get; set; }
 
-        [Display(Name = "Favoriate Video 2")]
+        [Display(Name = "Favorite Video 2")]
         public int FavoriteVideo2 { get; set; }
 
-        [Display(Name = "Favoriate Video 3")]
+        [Display(Name = "Favorite Video 3")]
         public int FavoriteVideo3 { get; set; }
 
         public string IdentityUserId { get; set; }
