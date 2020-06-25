@@ -5,18 +5,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row" id="clientDetailsRow1">
-    <center>
-        <h1>model.FirstName model.LastName</h1>
-    </center>
-</div>
-
-
-<video width="400px" controls>
-    <source src="~/images/IMG_1166.MP4" type="video/mp4" />
-</video>
-
-
 <h1>Client Details</h1>
 
 <div>
@@ -85,5 +73,6 @@
     </dl>
 </div>
 <div>
+    <a asp-controller="Clients" asp-action="Edit" asp-route-id="@Model.ClientId">Edit</a> |
     <a asp-controller="Clients" asp-action="Index">Back to Client Home</a>
 </div>
