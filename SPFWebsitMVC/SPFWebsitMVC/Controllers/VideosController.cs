@@ -211,6 +211,33 @@ namespace SPFWebsitMVC.Controllers
             HttpClient httpClient = new HttpClient();
             string url = $"{GlobalSettings.baseEndpoint}/videos/{id}";
             HttpResponseMessage response = await httpClient.DeleteAsync(url);
+
+            // Go through all clients and clear their favorite video if this one.
+            List<Client> Clients = null;
+            httpClient = new HttpClient();
+            url = $"{GlobalSettings.baseEndpoint}/clients/";
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                Clients = JsonConvert.DeserializeObject<List<Client>>(jsonResponse);
+            }
+            foreach(Client client in Clients)
+            {
+                if (client.FavoriteVideo1 == id)
+                    client.FavoriteVideo1 = 0;
+                if (client.FavoriteVideo2 == id)
+                    client.FavoriteVideo2 = 0;
+                if (client.FavoriteVideo3 == id)
+                    client.FavoriteVideo3 = 0;
+
+                // Put the client back.
+                string jsonForPost = JsonConvert.SerializeObject(client);
+                httpClient = new HttpClient();
+                url = $"{GlobalSettings.baseEndpoint}/clients/{client.ClientId}";
+                response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+            }
+
             return RedirectToAction("Index");
         }
 

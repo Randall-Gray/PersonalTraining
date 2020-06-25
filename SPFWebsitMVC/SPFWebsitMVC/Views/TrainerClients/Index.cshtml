@@ -13,7 +13,6 @@
 </div>
 </center>
 <p>
-    <a asp-controller="ClientVideos" asp-action="Index">Videos</a>  |
     <a asp-controller="Clients" asp-action="FAQLogin">FAQs</a>
     @*<a asp-action="Create">Create New</a>*@
 </p>
@@ -89,9 +88,10 @@
         <td>
             <a asp-controller="TrainerClients" asp-action="Edit" asp-route-id="@item.ClientId">Edit</a> |
             <a asp-controller="TrainerClients" asp-action="Details" asp-route-id="@item.ClientId">Details</a> |
-            <a asp-controller="TrainerClients" asp-action="Delete" asp-route-id="@item.ClientId">Delete</a>  
+            <a asp-controller="TrainerClients" asp-action="Delete" asp-route-id="@item.ClientId">Delete</a> |
+            <a asp-controller="ClientVideos" asp-action="Index" asp-route-id="@item.ClientId">Videos</a>
             @*<a asp-controller="Clients" asp-action="MakeAdmin" asp-route-id="@item.ClientId">>Admin</a> |
-            <a asp-controller="Clients" asp-action="MakeTrainer" asp-route-id="@item.ClientId">>Trainer</a>*@ 
+        <a asp-controller="Clients" asp-action="MakeTrainer" asp-route-id="@item.ClientId">>Trainer</a>*@
         </td>
         </tr>
 }

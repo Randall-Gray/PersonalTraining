@@ -216,9 +216,52 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
+            // Decrease the favorite video counts.
+            // Get the client.
+            Client client = null;
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/clients/{id}";
-            HttpResponseMessage response = await httpClient.DeleteAsync(url);
+            string url = $"{GlobalSettings.baseEndpoint}/clients/GetClientById/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+            }
+            int[] favorites = { client.FavoriteVideo1, client.FavoriteVideo2, client.FavoriteVideo3 };
+            for (int i = 0; i < 3; i++)
+            {
+                if (favorites[i] != 0)
+                {
+                    // Get the video
+                    Video video = null;
+                    httpClient = new HttpClient();
+                    url = $"{GlobalSettings.baseEndpoint}/videos/{favorites[i]}";
+                    response = await httpClient.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                        video = JsonConvert.DeserializeObject<Video>(jsonResponse);
+                    }
+
+                    if (video == null)
+                    {
+                        continue;
+                    }
+
+                    video.CurrentUse--;
+
+                    // Put the video back.
+                    string jsonForPost = JsonConvert.SerializeObject(video);
+                    httpClient = new HttpClient();
+                    url = $"{GlobalSettings.baseEndpoint}/videos/{favorites[i]}";
+                    response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+                }
+            }
+
+            // Delete the client.
+            httpClient = new HttpClient();
+            url = $"{GlobalSettings.baseEndpoint}/clients/{id}";
+            response = await httpClient.DeleteAsync(url);
             return RedirectToAction("Index");
         }
 

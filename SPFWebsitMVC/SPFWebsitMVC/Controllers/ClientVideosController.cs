@@ -72,8 +72,64 @@ namespace SPFWebsitMVC.Controllers
         }
 
         // Get: Videos/MakeFavorite/5
-        public IActionResult MakeFavorite(int? id)
+        public async Task<IActionResult> MakeFavorite(int videoId)
         {
+            // Get the client
+            Client client = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/GetClientById/{clientId}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+            }
+
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            if (client.FavoriteVideo1 == 0)
+                client.FavoriteVideo1 = videoId;
+            else if (client.FavoriteVideo2 == 0)
+                client.FavoriteVideo2 = videoId;
+            else if (client.FavoriteVideo3 == 0)
+                client.FavoriteVideo3 = videoId;
+            else
+                client.FavoriteVideo1 = videoId;  // if all are full, replace #1
+
+            // Put the client back.
+            string jsonForPost = JsonConvert.SerializeObject(client);
+            httpClient = new HttpClient();
+            url = $"{GlobalSettings.baseEndpoint}/clients/{clientId}";
+            response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+
+            // Get the video
+            Video video = null;
+            httpClient = new HttpClient();
+            url = $"{GlobalSettings.baseEndpoint}/videos/{videoId}";
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                video = JsonConvert.DeserializeObject<Video>(jsonResponse);
+            }
+
+            if (video == null)
+            {
+                return NotFound();
+            }
+
+            video.CurrentUse++;
+            video.TotalUse++;
+
+            // Put the video back.
+            jsonForPost = JsonConvert.SerializeObject(video);
+            httpClient = new HttpClient();
+            url = $"{GlobalSettings.baseEndpoint}/videos/{videoId}";
+            response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+
             return RedirectToAction("Index", "ClientVideos");
         }
 
