@@ -80,7 +80,65 @@ function GetFavVideo1() {
                     Post: data.post
                 };
 
-                $('.FavoriteVideo1').html('<video width="400px" controls><source src=${dict.Link} type="video/mp4" /></video>');
+                $('.FavoriteVideo1').html('<video width="400px" controls><source src='+ dict.Link +' type="video/mp4" /></video>');
+            },
+            error: function (jqXhr, textStatus, errorThrown) {
+                console.log(errorThrown);
+            }
+        });
+    }
+}
+
+function GetFavVideo2() {
+    if ($('#favVid2').val() != 0) {
+        $('.FavoriteVideo2').html('');
+        $.ajax({
+            url: 'https://localhost:44391/api/Videos/' + $('#favVid2').val(),
+            dataType: 'json',
+            type: 'get',
+            contentType: 'application/json',
+            success: function (data) {
+                var dict = {
+                    VideoId: data.videoId,
+                    Name: data.name,
+                    Topic: data.topic,
+                    Link: data.link,
+                    DatePosted: data.datePosted,
+                    CurrentUse: data.currentUse,
+                    TotalUse: data.totalUse,
+                    Post: data.post
+                };
+
+                $('.FavoriteVideo2').html('<video width="400px" controls><source src=' + dict.Link + ' type="video/mp4" /></video>');
+            },
+            error: function (jqXhr, textStatus, errorThrown) {
+                console.log(errorThrown);
+            }
+        });
+    }
+}
+
+function GetFavVideo3() {
+    if ($('#favVid3').val() != 0) {
+        $('.FavoriteVideo3').html('');
+        $.ajax({
+            url: 'https://localhost:44391/api/Videos/' + $('#favVid3').val(),
+            dataType: 'json',
+            type: 'get',
+            contentType: 'application/json',
+            success: function (data) {
+                var dict = {
+                    VideoId: data.videoId,
+                    Name: data.name,
+                    Topic: data.topic,
+                    Link: data.link,
+                    DatePosted: data.datePosted,
+                    CurrentUse: data.currentUse,
+                    TotalUse: data.totalUse,
+                    Post: data.post
+                };
+
+                $('.FavoriteVideo3').html('<video width="400px" controls><source src=' + dict.Link + ' type="video/mp4" /></video>');
             },
             error: function (jqXhr, textStatus, errorThrown) {
                 console.log(errorThrown);
@@ -93,3 +151,5 @@ $('#BroadcastMessages').ready(GetBroadcastMessages);
 $('#FAQLogin').ready(GetClientFAQs);
 $('#FAQNonLogin').ready(GetGeneralFAQs);
 $('#favVid1').ready(GetFavVideo1);
+$('#favVid2').ready(GetFavVideo2);
+$('#favVid3').ready(GetFavVideo3);
