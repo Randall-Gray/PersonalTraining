@@ -28,6 +28,22 @@ namespace PersonalTraining.Controllers
             return await _context.DayWeights.ToListAsync();
         }
 
+        // GET: api/DayWeights/GetDayWeightsByClientIdentityValue/5
+        [HttpGet("GetDayWeightsByClientIdentityValue/{identityValue}")]
+        public async Task<ActionResult<IEnumerable<DayWeight>>> GetDayWeightsByClientIdentityValue(string identityValue)
+        {
+            return await _context.DayWeights.Include(c => c.Client)
+                         .Where(c => c.Client.IdentityUserId == identityValue).ToListAsync();
+        }
+
+        // GET: api/DayWeights/GetDayWeightsByClientId/5
+        [HttpGet("GetDayWeightsByClientId/{id}")]
+        public async Task<ActionResult<IEnumerable<DayWeight>>> GetDayWeightsByClientId(int id)
+        {
+            return await _context.DayWeights.Include(c => c.Client)
+                         .Where(c => c.Client.ClientId == id).ToListAsync();
+        }
+
         // GET: api/DayWeights/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DayWeight>> GetDayWeight(int id)
