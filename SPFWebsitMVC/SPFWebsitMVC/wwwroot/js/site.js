@@ -60,6 +60,36 @@ function GetGeneralFAQs() {
     });
 }
 
+function GetFavVideo1() {
+    if ($('#favVid1').val() != 0) {
+        $('.FavoriteVideo1').html('');
+        $.ajax({
+            url: 'https://localhost:44391/api/Videos/' + $('#favVid1').val(),
+            dataType: 'json',
+            type: 'get',
+            contentType: 'application/json',
+            success: function (data) {
+                var dict = {
+                    VideoId: data.videoId,
+                    Name: data.name,
+                    Topic: data.topic,
+                    Link: data.link,
+                    DatePosted: data.datePosted,
+                    CurrentUse: data.currentUse,
+                    TotalUse: data.totalUse,
+                    Post: data.post
+                };
+
+                $('.FavoriteVideo1').html('<video width="400px" controls><source src=${dict.Link} type="video/mp4" /></video>');
+            },
+            error: function (jqXhr, textStatus, errorThrown) {
+                console.log(errorThrown);
+            }
+        });
+    }
+}
+
 $('#BroadcastMessages').ready(GetBroadcastMessages);
 $('#FAQLogin').ready(GetClientFAQs);
 $('#FAQNonLogin').ready(GetGeneralFAQs);
+$('#favVid1').ready(GetFavVideo1);
