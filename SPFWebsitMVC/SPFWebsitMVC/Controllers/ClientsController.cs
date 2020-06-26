@@ -356,6 +356,11 @@ namespace SPFWebsitMVC.Controllers
             return View();
         }
 
+        public IActionResult Schedule()
+        {
+            return View();
+        }
+
         private async Task<bool> ClientExists(int? id)
         {
             HttpClient httpClient = new HttpClient();
