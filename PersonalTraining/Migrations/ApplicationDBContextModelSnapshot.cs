@@ -182,6 +182,29 @@ namespace PersonalTraining.Migrations
                     b.ToTable("Conversations");
                 });
 
+            modelBuilder.Entity("PersonalTraining.Models.DayWeight", b =>
+                {
+                    b.Property<int>("DayWeightId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("float");
+
+                    b.HasKey("DayWeightId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("DayWeights");
+                });
+
             modelBuilder.Entity("PersonalTraining.Models.ExerciseClass", b =>
                 {
                     b.Property<int>("ExerciseClassId")
@@ -348,6 +371,15 @@ namespace PersonalTraining.Migrations
                     b.HasOne("PersonalTraining.Models.Trainer", "Trainer")
                         .WithMany()
                         .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PersonalTraining.Models.DayWeight", b =>
+                {
+                    b.HasOne("PersonalTraining.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

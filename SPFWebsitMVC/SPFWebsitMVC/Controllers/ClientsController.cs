@@ -361,6 +361,11 @@ namespace SPFWebsitMVC.Controllers
             return View();
         }
 
+        public IActionResult ChartProgress()
+        {
+            return View();
+        }
+
         private async Task<bool> ClientExists(int? id)
         {
             HttpClient httpClient = new HttpClient();
