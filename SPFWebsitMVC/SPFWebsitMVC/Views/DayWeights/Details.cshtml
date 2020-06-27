@@ -1,37 +1,24 @@
 ﻿@model SPFWebsitMVC.Models.DayWeight
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chart Progress - Chart";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<h1>Client Chart Progress</h1>
+<br />
+<br />
 
+<div id="linechart_material"></div>
+<input id="chartClientId" hidden value="@Model.ClientId" />
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="~/js/chart.js" asp-append-version="true"></script>
+
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['line'] });
+    google.charts.setOnLoadCallback(drawChart);
+</script>
 <div>
-    <h4>DayWeight</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Day)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Day)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Weight)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Weight)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClientId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClientId)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.DayWeightId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Back to Chart Progress Home</a>
 </div>

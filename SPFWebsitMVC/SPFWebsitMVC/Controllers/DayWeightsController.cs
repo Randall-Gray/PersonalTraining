@@ -43,13 +43,34 @@ namespace SPFWebsitMVC.Controllers
         // GET: DayWeights/Details/5
         public async Task<IActionResult> Details()
         {
-            int? id = null;
-            if (id == null)
+            //List<DayWeight> DayWeights = null;
+            //HttpClient httpClient = new HttpClient();
+            //string url = $"{GlobalSettings.baseEndpoint}/dayweights/";
+            //string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //url += "GetChartDataByClientIdentityValue/" + userId;
+            //HttpResponseMessage response = await httpClient.GetAsync(url);
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    string jsonResponse = await response.Content.ReadAsStringAsync();
+            //    DayWeights = JsonConvert.DeserializeObject<List<DayWeight>>(jsonResponse);
+            //}
+            //return View(DayWeights);
+            // Get the current client
+            Client client = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/clients/";
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            url += "GetClientByIdentityValue/" + userId;
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
             }
 
-            return RedirectToAction(nameof(Index));
+            DayWeight dayWeight = new DayWeight();
+            dayWeight.ClientId = client.ClientId;
+            return View(dayWeight);
         }
 
         // GET: DayWeights/Create
