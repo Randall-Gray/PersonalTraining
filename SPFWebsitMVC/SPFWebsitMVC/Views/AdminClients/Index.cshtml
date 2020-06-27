@@ -90,8 +90,9 @@
             <a asp-controller="AdminClients" asp-action="Edit" asp-route-id="@item.ClientId">Edit</a> |
             <a asp-controller="AdminClients" asp-action="Details" asp-route-id="@item.ClientId">Details</a> |
             <a asp-controller="AdminClients" asp-action="Delete" asp-route-id="@item.ClientId">Delete</a>  |
+            <a asp-controller="DayWeights" asp-action="Details" asp-route-id="@item.ClientId">Chart Progress</a> |
             <a asp-controller="AdminClients" asp-action="MakeAdmin" asp-route-id="@item.ClientId">>Admin</a> |
-            <a asp-controller="AdminClients" asp-action="MakeTrainer" asp-route-id="@item.ClientId">>Trainer</a> 
+            <a asp-controller="AdminClients" asp-action="MakeTrainer" asp-route-id="@item.ClientId">>Trainer</a>
         </td>
         </tr>
 }

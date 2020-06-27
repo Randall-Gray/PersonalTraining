@@ -41,35 +41,31 @@ namespace SPFWebsitMVC.Controllers
         }
 
         // GET: DayWeights/Details/5
-        public async Task<IActionResult> Details()
+        // Displays the Client's Progress Chart.
+        public async Task<IActionResult> Details(int? id)
         {
-            //List<DayWeight> DayWeights = null;
-            //HttpClient httpClient = new HttpClient();
-            //string url = $"{GlobalSettings.baseEndpoint}/dayweights/";
-            //string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //url += "GetChartDataByClientIdentityValue/" + userId;
-            //HttpResponseMessage response = await httpClient.GetAsync(url);
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    string jsonResponse = await response.Content.ReadAsStringAsync();
-            //    DayWeights = JsonConvert.DeserializeObject<List<DayWeight>>(jsonResponse);
-            //}
-            //return View(DayWeights);
-            // Get the current client
-            Client client = null;
-            HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/clients/";
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            url += "GetClientByIdentityValue/" + userId;
-            HttpResponseMessage response = await httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
-            }
-
             DayWeight dayWeight = new DayWeight();
-            dayWeight.ClientId = client.ClientId;
+
+            if (id == null)
+            {
+                // Get the current client
+                Client client = null;
+                HttpClient httpClient = new HttpClient();
+                string url = $"{GlobalSettings.baseEndpoint}/clients/";
+                string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                url += "GetClientByIdentityValue/" + userId;
+                HttpResponseMessage response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+                }
+
+                dayWeight.ClientId = client.ClientId;
+            }
+            else
+                dayWeight.ClientId = (int)id;
+
             return View(dayWeight);
         }
 
