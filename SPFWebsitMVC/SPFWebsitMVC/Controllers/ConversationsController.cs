@@ -53,7 +53,8 @@ namespace SPFWebsitMVC.Controllers
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 client = JsonConvert.DeserializeObject<Client>(jsonResponse);
             }
-            url = $"{GlobalSettings.baseEndpoint}/conversations/GetConversationsByClientId" + client.ClientId;
+            url = $"{GlobalSettings.baseEndpoint}/conversations/GetConversationsByClientId/" + client.ClientId;
+            response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
