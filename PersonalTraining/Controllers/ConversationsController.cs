@@ -28,21 +28,21 @@ namespace PersonalTraining.Controllers
             return await _context.Conversations.ToListAsync();
         }
 
-        //// GET: api/Conversations/GetConversationsByTrainerId/5
-        //[HttpGet("GetConversationsByTrainerId/{id}")]
-        //public async Task<ActionResult<IEnumerable<Conversation>>> GetConversationsByTrainerId(int id)
-        //{
-        //    var conversations = _context.Conversations.Include(c => c.Client).Include(t => t.Trainer)
-        //                         .Where(c => c.Trainer.TrainerId == id);
+        // GET: api/Conversations/GetConversationsByTrainerId/5
+        [HttpGet("GetConversationsByTrainerId/{id}")]
+        public async Task<ActionResult<IEnumerable<Conversation>>> GetConversationsByTrainerId(int? id)
+        {
+            return await  _context.Conversations.Include(c => c.Client).Include(t => t.Trainer)
+                                 .Where(c => c.TrainerId == id).ToListAsync();
+        }
 
-        //    if (conversations == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return conversations;
-        //}
-
+        // GET: api/Conversations/GetConversationsByClientId/5
+        [HttpGet("GetConversationsByClientId/{id}")]
+        public async Task<ActionResult<IEnumerable<Conversation>>> GetConversationsByClientId(int? id)
+        {
+            return await _context.Conversations.Include(c => c.Client).Include(t => t.Trainer)
+                                 .Where(c => c.ClientId == id).ToListAsync();
+        }
 
         // GET: api/Conversations/5
         [HttpGet("{id}")]
