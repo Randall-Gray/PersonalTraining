@@ -1,0 +1,48 @@
+﻿@model IEnumerable<SPFWebsitMVC.Models.DayWeight>
+
+@{
+    ViewData["Title"] = "Chart Progress - Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Chart Progress</h1>
+
+<p>
+    <a asp-action="Create">Create New Weight Entry</a> |
+    <a asp-action="Details">Chart</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Day)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Weight)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.ClientId)
+            </th>*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Day)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Weight)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.ClientId)
+            </td>*@
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.DayWeightId">Edit</a> |
+            <a asp-action="Delete" asp-route-id="@item.DayWeightId">Delete</a> 
+        </td>
+        </tr>
+}
+    </tbody>
+</table>

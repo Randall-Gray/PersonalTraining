@@ -36,12 +36,26 @@ namespace PersonalTraining.Controllers
                          .Where(c => c.Client.IdentityUserId == identityValue).ToListAsync();
         }
 
+        // GET: api/DayWeights/GetChartDataByClientIdentityValue/5
+        [HttpGet("GetChartDataByClientIdentityValue/{identityValue}")]
+        public async Task<ActionResult<IEnumerable<DayWeight>>> GetChartDataByClientIdentityValue(string identityValue)
+        {
+            return await _context.DayWeights.Where(c => c.Client.IdentityUserId == identityValue).ToListAsync();
+        }
+
         // GET: api/DayWeights/GetDayWeightsByClientId/5
         [HttpGet("GetDayWeightsByClientId/{id}")]
         public async Task<ActionResult<IEnumerable<DayWeight>>> GetDayWeightsByClientId(int id)
         {
             return await _context.DayWeights.Include(c => c.Client)
                          .Where(c => c.Client.ClientId == id).ToListAsync();
+        }
+
+        // GET: api/DayWeights/GetChartDataByClientId/5
+        [HttpGet("GetChartDataByClientId/{id}")]
+        public async Task<ActionResult<IEnumerable<DayWeight>>> GetChartDataByClientId(int id)
+        {
+            return await _context.DayWeights.Where(c => c.Client.ClientId == id).ToListAsync();
         }
 
         // GET: api/DayWeights/5

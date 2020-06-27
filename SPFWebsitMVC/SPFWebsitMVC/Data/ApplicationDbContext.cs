@@ -20,5 +20,6 @@ namespace SPFWebsitMVC.Data
         public DbSet<SPFWebsitMVC.Models.FAQ> FAQ { get; set; }
         public DbSet<SPFWebsitMVC.Models.Video> Video { get; set; }
         public DbSet<SPFWebsitMVC.Models.Conversation> Conversation { get; set; }
+        public DbSet<SPFWebsitMVC.Models.DayWeight> DayWeight { get; set; }
     }
 }
