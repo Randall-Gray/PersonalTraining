@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SPFWebsitMVC.Data;
 using SPFWebsitMVC.Models;
 
@@ -22,7 +26,40 @@ namespace SPFWebsitMVC.Controllers
         // GET: Conversations
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Conversation.ToListAsync());
+            List<Conversation> Conversations = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}";
+            HttpResponseMessage response;
+
+            // Display all conversations
+            if (GlobalSettings.CurrentUserRole == "Admin" || GlobalSettings.CurrentUserRole == "Trainer")
+            {
+                url += "/conversations/";
+                response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    Conversations = JsonConvert.DeserializeObject<List<Conversation>>(jsonResponse);
+                }
+                return View(Conversations);
+            }
+            // Only display the conversations of the logged in client
+            Client client = null;
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            url += "/clients/GetClientByIdentityValue/" + userId;
+            response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+            }
+            url = $"{GlobalSettings.baseEndpoint}/conversations/GetConversationsByClientId" + client.ClientId;
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                Conversations = JsonConvert.DeserializeObject<List<Conversation>>(jsonResponse);
+            }
+            return View(Conversations);
         }
 
         // GET: Conversations/Details/5
@@ -33,8 +70,15 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var conversation = await _context.Conversation
-                .FirstOrDefaultAsync(m => m.ConversationId == id);
+            Conversation conversation = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/conversation/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                conversation = JsonConvert.DeserializeObject<Conversation>(jsonResponse);
+            }
             if (conversation == null)
             {
                 return NotFound();
@@ -44,9 +88,41 @@ namespace SPFWebsitMVC.Controllers
         }
 
         // GET: Conversations/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            Conversation conversation = new Conversation();
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}";
+            HttpResponseMessage response;
+
+            if (GlobalSettings.CurrentUserRole == "client")
+            {
+                Client client = null;
+                url += "/clients/GetClientByIdentityValue/" + userId;
+                response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+                }
+
+                conversation.ClientId = client.ClientId;
+            }
+            else if (GlobalSettings.CurrentUserRole == "trainer")
+            {
+                Trainer trainer = null;
+                url += "/trainers/GetTrainerByIdentityValue/" + userId;
+                response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    trainer = JsonConvert.DeserializeObject<Trainer>(jsonResponse);
+                }
+
+                conversation.TrainerId = trainer.TrainerId;
+            }
+            return View(conversation);
         }
 
         // POST: Conversations/Create
@@ -58,9 +134,14 @@ namespace SPFWebsitMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(conversation);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                string jsonForPost = JsonConvert.SerializeObject(conversation);
+                HttpClient httpClient = new HttpClient();
+                string url = $"{GlobalSettings.baseEndpoint}/conversations";
+                HttpResponseMessage response = await httpClient.PostAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index", "Conversations");
+                }
             }
             return View(conversation);
         }
@@ -73,7 +154,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var conversation = await _context.Conversation.FindAsync(id);
+            Conversation conversation = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/conversations/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                conversation = JsonConvert.DeserializeObject<Conversation>(jsonResponse);
+            }
+
             if (conversation == null)
             {
                 return NotFound();
@@ -97,12 +187,14 @@ namespace SPFWebsitMVC.Controllers
             {
                 try
                 {
-                    _context.Update(conversation);
-                    await _context.SaveChangesAsync();
+                    string jsonForPost = JsonConvert.SerializeObject(conversation);
+                    HttpClient httpClient = new HttpClient();
+                    string url = $"{GlobalSettings.baseEndpoint}/conversations/{id}";
+                    HttpResponseMessage response = await httpClient.PutAsync(url, new StringContent(jsonForPost, Encoding.UTF8, "application/json"));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ConversationExists(conversation.ConversationId))
+                    if (await ConversationExists(conversation.ConversationId) == false)
                     {
                         return NotFound();
                     }
@@ -124,8 +216,16 @@ namespace SPFWebsitMVC.Controllers
                 return NotFound();
             }
 
-            var conversation = await _context.Conversation
-                .FirstOrDefaultAsync(m => m.ConversationId == id);
+            Conversation conversation = null;
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/conversation/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                conversation = JsonConvert.DeserializeObject<Conversation>(jsonResponse);
+            }
+
             if (conversation == null)
             {
                 return NotFound();
@@ -139,15 +239,23 @@ namespace SPFWebsitMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var conversation = await _context.Conversation.FindAsync(id);
-            _context.Conversation.Remove(conversation);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/conversations/{id}";
+            HttpResponseMessage response = await httpClient.DeleteAsync(url);
+            return RedirectToAction("Index");
         }
 
-        private bool ConversationExists(int id)
+        private async Task<bool> ConversationExists(int? id)
         {
-            return _context.Conversation.Any(e => e.ConversationId == id);
+            HttpClient httpClient = new HttpClient();
+            string url = $"{GlobalSettings.baseEndpoint}/conversations/{id}";
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
