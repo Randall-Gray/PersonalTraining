@@ -64,6 +64,24 @@ namespace PersonalTraining.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Conversations",
+                columns: table => new
+                {
+                    ConversationId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Question = table.Column<string>(nullable: true),
+                    Answer = table.Column<string>(nullable: true),
+                    FollowUp = table.Column<int>(nullable: false),
+                    DatePosted = table.Column<DateTime>(nullable: false),
+                    ClientId = table.Column<int>(nullable: false),
+                    TrainerId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Conversations", x => x.ConversationId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ExerciseClasses",
                 columns: table => new
                 {
@@ -202,36 +220,6 @@ namespace PersonalTraining.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Conversations",
-                columns: table => new
-                {
-                    ConversationId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Question = table.Column<string>(nullable: true),
-                    Answer = table.Column<string>(nullable: true),
-                    FollowUp = table.Column<int>(nullable: false),
-                    DatePosted = table.Column<DateTime>(nullable: false),
-                    ClientId = table.Column<int>(nullable: false),
-                    TrainerId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Conversations", x => x.ConversationId);
-                    table.ForeignKey(
-                        name: "FK_Conversations_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "ClientId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Conversations_Trainers_TrainerId",
-                        column: x => x.TrainerId,
-                        principalTable: "Trainers",
-                        principalColumn: "TrainerId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "Admins",
                 columns: new[] { "AdminId", "Email", "FirstName", "IdentityUserId", "LastName", "PhoneNumber" },
@@ -246,16 +234,6 @@ namespace PersonalTraining.Migrations
                 name: "IX_Attendances_ExerciseClassId",
                 table: "Attendances",
                 column: "ExerciseClassId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Conversations_ClientId",
-                table: "Conversations",
-                column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Conversations_TrainerId",
-                table: "Conversations",
-                column: "TrainerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DayWeights_ClientId",
@@ -292,13 +270,13 @@ namespace PersonalTraining.Migrations
                 name: "Payments");
 
             migrationBuilder.DropTable(
+                name: "Trainers");
+
+            migrationBuilder.DropTable(
                 name: "Videos");
 
             migrationBuilder.DropTable(
                 name: "ExerciseClasses");
-
-            migrationBuilder.DropTable(
-                name: "Trainers");
 
             migrationBuilder.DropTable(
                 name: "Clients");

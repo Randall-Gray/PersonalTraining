@@ -32,16 +32,14 @@ namespace PersonalTraining.Controllers
         [HttpGet("GetConversationsByTrainerId/{id}")]
         public async Task<ActionResult<IEnumerable<Conversation>>> GetConversationsByTrainerId(int? id)
         {
-            return await  _context.Conversations.Include(c => c.Client).Include(t => t.Trainer)
-                                 .Where(c => c.TrainerId == id).ToListAsync();
+            return await  _context.Conversations.Where(c => c.TrainerId == id).ToListAsync();
         }
 
         // GET: api/Conversations/GetConversationsByClientId/5
         [HttpGet("GetConversationsByClientId/{id}")]
         public async Task<ActionResult<IEnumerable<Conversation>>> GetConversationsByClientId(int? id)
         {
-            return await _context.Conversations.Include(c => c.Client).Include(t => t.Trainer)
-                                 .Where(c => c.ClientId == id).ToListAsync();
+            return await _context.Conversations.Where(c => c.ClientId == id).ToListAsync();
         }
 
         // GET: api/Conversations/5

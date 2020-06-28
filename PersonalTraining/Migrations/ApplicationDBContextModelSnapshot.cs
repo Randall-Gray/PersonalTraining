@@ -175,10 +175,6 @@ namespace PersonalTraining.Migrations
 
                     b.HasKey("ConversationId");
 
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("TrainerId");
-
                     b.ToTable("Conversations");
                 });
 
@@ -356,21 +352,6 @@ namespace PersonalTraining.Migrations
                     b.HasOne("PersonalTraining.Models.ExerciseClass", "Class")
                         .WithMany()
                         .HasForeignKey("ExerciseClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PersonalTraining.Models.Conversation", b =>
-                {
-                    b.HasOne("PersonalTraining.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PersonalTraining.Models.Trainer", "Trainer")
-                        .WithMany()
-                        .HasForeignKey("TrainerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

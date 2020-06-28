@@ -82,7 +82,9 @@ namespace SPFWebsitMVC.Controllers
         // GET: FAQs/Create
         public IActionResult Create()
         {
-            return View();
+            FAQ fAQ = new FAQ();
+            fAQ.DatePosted = DateTime.Now;
+            return View(fAQ);
         }
 
         // POST: FAQs/Create

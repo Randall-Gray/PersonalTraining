@@ -23,12 +23,8 @@ namespace PersonalTraining.Models
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DatePosted { get; set; }
 
-        [ForeignKey("Client")]
         public int ClientId { get; set; }
-        public Client Client { get; set; }
 
-        [ForeignKey("Trainer")]
         public int TrainerId { get; set; }
-        public Trainer Trainer { get; set; }
     }
 }

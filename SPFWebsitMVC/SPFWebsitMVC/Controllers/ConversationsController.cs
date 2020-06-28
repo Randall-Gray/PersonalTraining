@@ -121,6 +121,7 @@ namespace SPFWebsitMVC.Controllers
                     conversation.TrainerId = trainer.TrainerId;
                 }
             }
+            conversation.DatePosted = DateTime.Now;
             return View(conversation);
         }
 

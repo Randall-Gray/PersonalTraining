@@ -10,7 +10,7 @@ using PersonalTraining.Data;
 namespace PersonalTraining.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20200626220736_Initial")]
+    [Migration("20200628024530_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -176,10 +176,6 @@ namespace PersonalTraining.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ConversationId");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("TrainerId");
 
                     b.ToTable("Conversations");
                 });
@@ -358,21 +354,6 @@ namespace PersonalTraining.Migrations
                     b.HasOne("PersonalTraining.Models.ExerciseClass", "Class")
                         .WithMany()
                         .HasForeignKey("ExerciseClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PersonalTraining.Models.Conversation", b =>
-                {
-                    b.HasOne("PersonalTraining.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PersonalTraining.Models.Trainer", "Trainer")
-                        .WithMany()
-                        .HasForeignKey("TrainerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
