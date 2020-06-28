@@ -1,14 +1,14 @@
 ﻿@model IEnumerable<SPFWebsitMVC.Models.Conversation>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Conversatoins - Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Conversations Home</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create New Conversation</a>
 </p>
 <table class="table">
     <thead>
@@ -19,18 +19,18 @@
             <th>
                 @Html.DisplayNameFor(model => model.Answer)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.FollowUp)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.DatePosted)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.ClientId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TrainerId)
-            </th>
+            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -43,18 +43,18 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Answer)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.FollowUp)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.DatePosted)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.ClientId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TrainerId)
-            </td>
+            </td>*@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ConversationId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ConversationId">Details</a> |

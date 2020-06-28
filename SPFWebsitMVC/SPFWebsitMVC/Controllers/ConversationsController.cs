@@ -73,7 +73,7 @@ namespace SPFWebsitMVC.Controllers
 
             Conversation conversation = null;
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/conversation/{id}";
+            string url = $"{GlobalSettings.baseEndpoint}/conversations/{id}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -97,7 +97,7 @@ namespace SPFWebsitMVC.Controllers
             string url = $"{GlobalSettings.baseEndpoint}";
             HttpResponseMessage response;
 
-            if (GlobalSettings.CurrentUserRole == "client")
+            if (GlobalSettings.CurrentUserRole == "Client")
             {
                 Client client = null;
                 url += "/clients/GetClientByIdentityValue/" + userId;
@@ -106,11 +106,10 @@ namespace SPFWebsitMVC.Controllers
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
                     client = JsonConvert.DeserializeObject<Client>(jsonResponse);
+                    conversation.ClientId = client.ClientId;
                 }
-
-                conversation.ClientId = client.ClientId;
             }
-            else if (GlobalSettings.CurrentUserRole == "trainer")
+            else if (GlobalSettings.CurrentUserRole == "Trainer")
             {
                 Trainer trainer = null;
                 url += "/trainers/GetTrainerByIdentityValue/" + userId;
@@ -119,9 +118,8 @@ namespace SPFWebsitMVC.Controllers
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
                     trainer = JsonConvert.DeserializeObject<Trainer>(jsonResponse);
+                    conversation.TrainerId = trainer.TrainerId;
                 }
-
-                conversation.TrainerId = trainer.TrainerId;
             }
             return View(conversation);
         }
@@ -219,7 +217,7 @@ namespace SPFWebsitMVC.Controllers
 
             Conversation conversation = null;
             HttpClient httpClient = new HttpClient();
-            string url = $"{GlobalSettings.baseEndpoint}/conversation/{id}";
+            string url = $"{GlobalSettings.baseEndpoint}/conversations/{id}";
             HttpResponseMessage response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
