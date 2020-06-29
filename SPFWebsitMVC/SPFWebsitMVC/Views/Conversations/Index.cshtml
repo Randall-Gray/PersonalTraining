@@ -19,18 +19,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Answer)
             </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.FollowUp)
-            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.DatePosted)
             </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.ClientId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TrainerId)
-            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -43,18 +34,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Answer)
             </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.FollowUp)
-            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.DatePosted)
             </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.ClientId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TrainerId)
-            </td>*@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ConversationId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ConversationId">Details</a> |

@@ -20,9 +20,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Weight)
             </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.ClientId)
-            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -35,9 +32,6 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Weight)
             </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.ClientId)
-            </td>*@
         <td>
             <a asp-action="Edit" asp-route-id="@item.DayWeightId">Edit</a> |
             <a asp-action="Delete" asp-route-id="@item.DayWeightId">Delete</a> 

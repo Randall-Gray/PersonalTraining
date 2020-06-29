@@ -34,17 +34,7 @@
                 <span asp-validation-for="DatePosted" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="CurrentUse" />
-            @*<div class="form-group">
-            <label asp-for="CurrentUse" class="control-label"></label>
-            <input asp-for="CurrentUse" class="form-control" />
-            <span asp-validation-for="CurrentUse" class="text-danger"></span>
-        </div>*@
             <input type="hidden" asp-for="TotalUse" />
-            @*<div class="form-group">
-                <label asp-for="TotalUse" class="control-label"></label>
-                <input asp-for="TotalUse" class="form-control" />
-                <span asp-validation-for="TotalUse" class="text-danger"></span>
-            </div>*@
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="Post" /> @Html.DisplayNameFor(model => model.Post)

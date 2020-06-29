@@ -14,7 +14,6 @@
 </center>
 <p>
     <a asp-controller="Clients" asp-action="Schedule">Schedule Session</a>
-    @*<a asp-action="Create">Create New</a>*@
 </p>
 <table class="table">
     <thead>
@@ -31,9 +30,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.IdentityUserId)
-            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -52,9 +48,6 @@
             <td>
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.IdentityUserId)
-            </td>*@
         <td>
             <a asp-controller="AdminTrainers" asp-action="Edit" asp-route-id="@item.TrainerId">Edit</a> |
             <a asp-controller="AdminTrainers" asp-action="Details" asp-route-id="@item.TrainerId">Details</a> |

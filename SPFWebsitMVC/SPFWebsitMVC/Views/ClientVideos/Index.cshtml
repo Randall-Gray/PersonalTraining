@@ -7,9 +7,6 @@
 
 <h1>Exercise/Health Videos Home</h1>
 
-<p>
-    @*<a asp-action="Create">Add New Video</a>*@
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -25,15 +22,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.DatePosted)
             </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.CurrentUse)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalUse)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Post)
-            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -52,15 +40,6 @@
             <td>
                 @Html.DisplayFor(modelItem => item.DatePosted)
             </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.CurrentUse)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalUse)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Post)
-            </td>*@
             <td>
                 <a asp-action="MakeFavorite" asp-route-id="@item.VideoId">Add Favorite</a> |
                 <a asp-action="Details" asp-route-id="@item.VideoId">Details</a> |

@@ -13,14 +13,14 @@
     </div>
 </center>
 
-<a asp-controller="TrainerClients" asp-action="Index">Clients</a> |
-<a asp-controller="Videos" asp-action="Index">Videos</a>  |
-<a asp-controller="Clients" asp-action="Schedule">Schedule Session</a> |
-<a asp-controller="Conversations" asp-action="Index">Answers?</a> |
-<a asp-controller="FAQs" asp-action="Index">FAQs</a>
 <p>
-    @*<a asp-action="Create">Create New</a>*@
+    <a asp-controller="TrainerClients" asp-action="Index">Clients</a> |
+    <a asp-controller="Videos" asp-action="Index">Videos</a>  |
+    <a asp-controller="Clients" asp-action="Schedule">Schedule Session</a> |
+    <a asp-controller="Conversations" asp-action="Index">Answers?</a> |
+    <a asp-controller="FAQs" asp-action="Index">FAQs</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -36,9 +36,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.IdentityUserId)
-                </th>*@
             <th></th>
         </tr>
     </thead>
@@ -58,14 +55,10 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.PhoneNumber)
                 </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.IdentityUserId)
-                    </td>*@
                 <td>
                     <a asp-controller="Trainers" asp-action="Edit" asp-route-id="@item.TrainerId">Edit</a> |
                     <a asp-controller="Trainers" asp-action="Details" asp-route-id="@item.TrainerId">Details</a> |
                     <a asp-controller="Trainers" asp-action="Delete" asp-route-id="@item.TrainerId">Delete</a>
-                    @*<a asp-controller="Trainers" asp-action="MakeAdmin" asp-route-id="@item.TrainerId">(Admin)</a>*@
                 </td>
             </tr>
         }
